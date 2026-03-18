@@ -36,14 +36,17 @@ This project plans to use the following technologies:
 
 ---
 
-## 📂 Project Structure
+##  📂 Project Structure
 
-personal-book-library  
-│  
-├── README.md  
-├── .gitignore  
+```
+personal-book-library
+│
+├── README.md
+├── .gitignore
+└── src
+    └── index.html
+```
 
----
 
 ## 👩‍💻 Student
 **Agnesa Hoti**

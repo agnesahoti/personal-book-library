@@ -35,3 +35,9 @@
 
 - BookService uses Book
 - BookRepository uses Book
+
+---
+
+## 📷 Diagram Image
+
+![Class Diagram](class-diagram.png)

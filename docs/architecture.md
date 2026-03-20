@@ -53,3 +53,15 @@ Ndërfaqja e përdoruesit.
 - Lehtë për mirëmbajtje
 - Strukturë e zgjerueshme
 - Organizim i qartë i kodit
+
+---
+## 🔧 SOLID Principles
+
+This project applies the Single Responsibility Principle (SRP).
+
+- Each class has a single responsibility:
+  - Book: represents data
+  - BookService: handles business logic
+  - BookRepository: manages data access
+
+This improves code organization and maintainability.

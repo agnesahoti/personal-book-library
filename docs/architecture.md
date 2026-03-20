@@ -55,13 +55,15 @@ Ndërfaqja e përdoruesit.
 - Organizim i qartë i kodit
 
 ---
-## 🔧 SOLID Principles
+🔧 Parimet SOLID
+Ky projekt zbaton Parimin e Përgjegjësisë së Vetme (SRP).
 
-This project applies the Single Responsibility Principle (SRP).
+Çdo klasë ka një përgjegjësi të vetme:
 
-- Each class has a single responsibility:
-  - Book: represents data
-  - BookService: handles business logic
-  - BookRepository: manages data access
+Book: përfaqëson të dhënat
 
-This improves code organization and maintainability.
+BookService: merret me logjikën e biznesit
+
+BookRepository: menaxhon qasjen në të dhëna
+
+Kjo përmirëson organizimin e kodit dhe mirëmbajtjen e tij.

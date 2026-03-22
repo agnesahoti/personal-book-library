@@ -39,12 +39,16 @@ This project plans to use the following technologies:
 ##  📂 Project Structure
 
 ```
-📂 Project Structure
-
 personal-book-library
 │
 ├── README.md
 ├── .gitignore
+│
+├── docs
+│   ├── class-diagram.md
+│   ├── class-diagram.png
+│   └── architecture.md
+│
 └── src
     ├── Models
     │    └── Book.cs
@@ -53,6 +57,7 @@ personal-book-library
     │    └── BookService.cs
     │
     ├── Data
+    │    ├── IRepository.cs
     │    └── BookRepository.cs
     │
     ├── UI

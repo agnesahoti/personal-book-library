@@ -53,3 +53,17 @@ Ndërfaqja e përdoruesit.
 - Lehtë për mirëmbajtje
 - Strukturë e zgjerueshme
 - Organizim i qartë i kodit
+
+---
+🔧 Parimet SOLID
+Ky projekt zbaton Parimin e Përgjegjësisë së Vetme (SRP).
+
+Çdo klasë ka një përgjegjësi të vetme:
+
+Book: përfaqëson të dhënat
+
+BookService: merret me logjikën e biznesit
+
+BookRepository: menaxhon qasjen në të dhëna
+
+Kjo përmirëson organizimin e kodit dhe mirëmbajtjen e tij.

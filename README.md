@@ -39,6 +39,8 @@ This project plans to use the following technologies:
 ##  📂 Project Structure
 
 ```
+📂 Project Structure
+
 personal-book-library
 │
 ├── README.md
@@ -50,22 +52,28 @@ personal-book-library
 │   └── architecture.md
 │
 └── src
-    ├── Models
-    │    └── Book.cs
+    ├── backend
+    │   ├── Models
+    │   │    └── Book.cs
+    │   │
+    │   ├── Services
+    │   │    └── BookService.cs
+    │   │
+    │   ├── Data
+    │   │    ├── IRepository.cs
+    │   │    └── BookRepository.cs
+    │   │
+    │   └── Program.cs
     │
-    ├── Services
-    │    └── BookService.cs
-    │
-    ├── Data
-    │    ├── IRepository.cs
-    │    └── BookRepository.cs
-    │
-    ├── UI
-    │    └── index.html
-    │
-    └── Program.cs
-```
+    └── frontend
+        └── index.html
 
+```
+## 🧩 Frontend & Backend
+
+- Frontend: located in `src/frontend` (index.html)
+- Backend: located in `src/backend` (Models, Services, Data, Program.cs)
+```
 
 ## 👩‍💻 Student
 **Agnesa Hoti**

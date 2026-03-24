@@ -1,0 +1,52 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using PersonalBookLibrary.Models;
+
+namespace PersonalBookLibrary.Data
+{
+    public class FileRepository : IRepository<Book>
+    {
+        private string filePath = "books.csv";
+
+        public List<Book> GetAll()
+        {
+            var books = new List<Book>();
+
+            if (!File.Exists(filePath))
+                return books;
+
+            var lines = File.ReadAllLines(filePath);
+
+            foreach (var line in lines)
+            {
+                var parts = line.Split(',');
+
+                Book book = new Book();
+                book.SetId(int.Parse(parts[0]));
+                book.SetTitle(parts[1]);
+                book.SetAuthor(parts[2]);
+
+                books.Add(book);
+            }
+
+            return books;
+        }
+
+        public Book GetById(int id)
+        {
+            return GetAll().FirstOrDefault(b => b.GetId() == id);
+        }
+
+        public void Add(Book book)
+        {
+            string line = $"{book.GetId()},{book.GetTitle()},{book.GetAuthor()}";
+            File.AppendAllText(filePath, line + "\n");
+        }
+
+        public void Save()
+        {
+            // Already saving on Add
+        }
+    }
+}

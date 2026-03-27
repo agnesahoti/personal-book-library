@@ -7,6 +7,6 @@ namespace PersonalBookLibrary.Data
         List<T> GetAll();
         T GetById(int id);
         void Add(T item);
-        void Save();
+        void Save(List<T> items);
     }
 }

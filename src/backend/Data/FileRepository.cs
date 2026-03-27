@@ -7,7 +7,7 @@ namespace PersonalBookLibrary.Data
 {
     public class FileRepository : IRepository<Book>
     {
-        private string filePath = "books.csv";
+        private string filePath = "src/backend/Data/books.csv";
 
         public List<Book> GetAll()
         {
@@ -40,13 +40,21 @@ namespace PersonalBookLibrary.Data
 
         public void Add(Book book)
         {
-            string line = $"{book.GetId()},{book.GetTitle()},{book.GetAuthor()}";
-            File.AppendAllText(filePath, line + "\n");
+            var books = GetAll();
+            books.Add(book);
+            Save(books);
         }
 
-        public void Save()
+        public void Save(List<Book> books)
         {
-            // Already saving on Add
+            var lines = new List<string>();
+
+            foreach (var book in books)
+            {
+                lines.Add($"{book.GetId()},{book.GetTitle()},{book.GetAuthor()}");
+            }
+
+            File.WriteAllLines(filePath, lines);
         }
     }
 }

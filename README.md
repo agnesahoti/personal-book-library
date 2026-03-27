@@ -39,8 +39,6 @@ This project plans to use the following technologies:
 ##  📂 Project Structure
 
 ```
-📂 Project Structure
-
 personal-book-library
 │
 ├── README.md
@@ -61,13 +59,13 @@ personal-book-library
     │   │
     │   ├── Data
     │   │    ├── IRepository.cs
-    │   │    └── BookRepository.cs
+    │   │    ├── BookRepository.cs
+    │   │    └── FileRepository.cs
     │   │
     │   └── Program.cs
     │
     └── frontend
         └── index.html
-
 ```
 ## 🧩 Frontend & Backend
 

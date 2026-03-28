@@ -7,8 +7,8 @@ namespace PersonalBookLibrary.Data
 {
     public class FileRepository : IRepository<Book>
     {
-        private string filePath = "src/backend/Data/books.csv";
-
+        private string filePath = "Data/books.csv";
+        
         public List<Book> GetAll()
         {
             var books = new List<Book>();

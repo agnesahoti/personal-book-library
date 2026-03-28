@@ -1,35 +1,68 @@
 using System;
 using PersonalBookLibrary.Models;
 using PersonalBookLibrary.Data;
+using PersonalBookLibrary.Services;
 
 class Program
 {
     static void Main(string[] args)
     {
         FileRepository repo = new FileRepository();
+        BookService service = new BookService(repo);
 
-        Console.WriteLine("Enter book title:");
-        string title = Console.ReadLine();
-
-        Console.WriteLine("Enter book author:");
-        string author = Console.ReadLine();
-
-        // krijo ID automatik
-        var books = repo.GetAll();
-        int newId = books.Count + 1;
-
-        Book newBook = new Book();
-        newBook.SetId(newId);
-        newBook.SetTitle(title);
-        newBook.SetAuthor(author);
-
-        repo.Add(newBook);
-
-        Console.WriteLine("\nBooks in library:\n");
-
-        foreach (var book in repo.GetAll())
+        while (true)
         {
-            Console.WriteLine($"{book.GetId()} - {book.GetTitle()} - {book.GetAuthor()}");
+            Console.WriteLine("\n1 - Show Books");
+            Console.WriteLine("2 - Add Book");
+            Console.WriteLine("0 - Exit");
+            Console.Write("Choose: ");
+
+            string choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                Console.Write("\nFilter by author (leave empty for all): ");
+                string filter = Console.ReadLine();
+
+                var books = service.GetAll(filter);
+
+                Console.WriteLine("\nBooks:\n");
+
+                foreach (var book in books)
+                {
+                    Console.WriteLine($"{book.GetId()} - {book.GetTitle()} - {book.GetAuthor()}");
+                }
+            }
+            else if (choice == "2")
+            {
+                Console.Write("Enter title: ");
+                string title = Console.ReadLine();
+
+                Console.Write("Enter author: ");
+                string author = Console.ReadLine();
+
+                Book newBook = new Book();
+                newBook.SetTitle(title);
+                newBook.SetAuthor(author);
+
+                try
+                {
+                    service.Add(newBook);
+                    Console.WriteLine("Book added successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+            else if (choice == "0")
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid option!");
+            }
         }
     }
 }

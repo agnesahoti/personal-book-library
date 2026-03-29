@@ -8,7 +8,7 @@ namespace PersonalBookLibrary.Data
     public class FileRepository : IRepository<Book>
     {
         private string filePath = "Data/books.csv";
-        
+
         public List<Book> GetAll()
         {
             var books = new List<Book>();
@@ -20,15 +20,21 @@ namespace PersonalBookLibrary.Data
 
             foreach (var line in lines)
             {
-                var parts = line.Split(',');
+             if (string.IsNullOrWhiteSpace(line))
+               continue;
 
-                Book book = new Book();
-                book.SetId(int.Parse(parts[0]));
-                book.SetTitle(parts[1]);
-                book.SetAuthor(parts[2]);
+             var parts = line.Split(',');
 
-                books.Add(book);
-            }
+             if (parts.Length < 3)
+             continue;
+
+             Book book = new Book();
+             book.SetId(int.Parse(parts[0]));
+             book.SetTitle(parts[1]);
+             book.SetAuthor(parts[2]);
+
+             books.Add(book);
+             }
 
             return books;
         }

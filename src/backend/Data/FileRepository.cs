@@ -20,21 +20,21 @@ namespace PersonalBookLibrary.Data
 
             foreach (var line in lines)
             {
-             if (string.IsNullOrWhiteSpace(line))
-               continue;
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
 
-             var parts = line.Split(',');
+                var parts = line.Split(',');
 
-             if (parts.Length < 3)
-             continue;
+                if (parts.Length < 3)
+                    continue;
 
-             Book book = new Book();
-             book.SetId(int.Parse(parts[0]));
-             book.SetTitle(parts[1]);
-             book.SetAuthor(parts[2]);
+                Book book = new Book();
+                book.SetId(int.Parse(parts[0]));
+                book.SetTitle(parts[1]);
+                book.SetAuthor(parts[2]);
 
-             books.Add(book);
-             }
+                books.Add(book);
+            }
 
             return books;
         }
@@ -49,6 +49,20 @@ namespace PersonalBookLibrary.Data
             var books = GetAll();
             books.Add(book);
             Save(books);
+        }
+
+        // 🔥 DELETE METHOD
+        public void Delete(int id)
+        {
+            var books = GetAll();
+
+            var bookToRemove = books.FirstOrDefault(b => b.GetId() == id);
+
+            if (bookToRemove != null)
+            {
+                books.Remove(bookToRemove);
+                Save(books);
+            }
         }
 
         public void Save(List<Book> books)

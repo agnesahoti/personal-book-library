@@ -8,5 +8,6 @@ namespace PersonalBookLibrary.Data
         T GetById(int id);
         void Add(T item);
         void Save(List<T> items);
+        void Delete(int id);
     }
 }

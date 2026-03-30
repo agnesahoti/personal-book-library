@@ -18,6 +18,7 @@ class Program
             Console.WriteLine("1 - Show Books");
             Console.WriteLine("2 - Add Book");
             Console.WriteLine("3 - Find Book by ID");
+            Console.WriteLine("4 - Delete Book"); // 🔥 NEW
             Console.WriteLine("0 - Exit");
             Console.Write("Choose: ");
 
@@ -80,6 +81,21 @@ class Program
                 else
                 {
                     Console.WriteLine("Book not found!");
+                }
+            }
+            else if (choice == "4") // 🔥 DELETE
+            {
+                Console.Write("Enter book ID to delete: ");
+                int id = int.Parse(Console.ReadLine() ?? "0");
+
+                try
+                {
+                    service.Delete(id);
+                    Console.WriteLine("Book deleted successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
             }
             else if (choice == "0")

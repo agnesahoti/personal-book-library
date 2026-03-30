@@ -8,19 +8,19 @@ namespace PersonalBookLibrary.Services
 {
     public class BookService
     {
-        private IRepository<Book> repository;
+        private readonly IRepository<Book> _repository;
 
         public BookService(IRepository<Book> repo)
         {
-            repository = repo;
+            _repository = repo;
         }
 
         // Listo + filter
         public List<Book> GetAll(string authorFilter = "")
         {
-            var books = repository.GetAll();
+            var books = _repository.GetAll();
 
-            if (!string.IsNullOrEmpty(authorFilter))
+            if (!string.IsNullOrWhiteSpace(authorFilter))
             {
                 books = books
                     .Where(b => b.GetAuthor().ToLower().Contains(authorFilter.ToLower()))
@@ -39,16 +39,27 @@ namespace PersonalBookLibrary.Services
             if (string.IsNullOrWhiteSpace(book.GetAuthor()))
                 throw new Exception("Author cannot be empty!");
 
-            var books = repository.GetAll();
+            var books = _repository.GetAll();
             book.SetId(books.Count + 1);
 
-            repository.Add(book);
+            _repository.Add(book);
         }
 
         // Gjej sipas ID
         public Book GetById(int id)
         {
-            return repository.GetById(id);
+            return _repository.GetById(id);
+        }
+
+        // 🔥 DELETE
+        public void Delete(int id)
+        {
+            var book = _repository.GetById(id);
+
+            if (book == null)
+                throw new Exception("Book not found!");
+
+            _repository.Delete(id);
         }
     }
 }

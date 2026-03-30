@@ -51,12 +51,14 @@ Rrjedha e funksionimit është si më poshtë:
 5. Rezultati kthehet dhe shfaqet te përdoruesi.
 
 ## 🖼️ Shembull Output-i
+```
 === Personal Book Library ===
 1 - Show Books
 2 - Add Book
 3 - Find Book by ID
 4 - Delete Book
 0 - Exit
+```
 
 ## ✅ Përfundim
 Ky aplikacion implementon funksionalitetet bazë për menaxhimin e librave: shtim, shfaqje, kërkim dhe fshirje. Ai demonstron përdorimin e arkitekturës me shtresa, validimin e input-it dhe ruajtjen e të dhënave në file.

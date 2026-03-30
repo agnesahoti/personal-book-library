@@ -64,6 +64,3 @@ Rrjedha e funksionimit është si më poshtë:
 Ky aplikacion implementon funksionalitetet bazë për menaxhimin e librave: shtim, shfaqje, kërkim dhe fshirje. Ai demonstron përdorimin e arkitekturës me shtresa, validimin e input-it dhe ruajtjen e të dhënave në file.
 
 Projekti është i strukturuar në mënyrë të qartë dhe përmbush kërkesat kryesore të detyrës.
-
-## 📸 Screenshot
-(Shto një screenshot këtu: docs/screenshot.png)

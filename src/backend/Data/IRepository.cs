@@ -7,7 +7,8 @@ namespace PersonalBookLibrary.Data
         List<T> GetAll();
         T GetById(int id);
         void Add(T item);
-        void Save(List<T> items);
+        void Update(T item);   
         void Delete(int id);
+        void Save(List<T> items);
     }
 }

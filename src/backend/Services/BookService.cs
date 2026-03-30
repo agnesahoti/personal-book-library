@@ -51,6 +51,23 @@ namespace PersonalBookLibrary.Services
             return _repository.GetById(id);
         }
 
+        // 🔥 UPDATE
+        public void Update(Book book)
+        {
+            if (string.IsNullOrWhiteSpace(book.GetTitle()))
+                throw new Exception("Title cannot be empty!");
+
+            if (string.IsNullOrWhiteSpace(book.GetAuthor()))
+                throw new Exception("Author cannot be empty!");
+
+            var existingBook = _repository.GetById(book.GetId());
+
+            if (existingBook == null)
+                throw new Exception("Book not found!");
+
+            _repository.Update(book);
+        }
+
         // 🔥 DELETE
         public void Delete(int id)
         {

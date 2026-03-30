@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,6 +49,22 @@ namespace PersonalBookLibrary.Data
         {
             var books = GetAll();
             books.Add(book);
+            Save(books);
+        }
+
+        // 🔥 UPDATE METHOD
+        public void Update(Book updatedBook)
+        {
+            var books = GetAll();
+
+            var existingBook = books.FirstOrDefault(b => b.GetId() == updatedBook.GetId());
+
+            if (existingBook == null)
+                throw new Exception("Book not found!");
+
+            existingBook.SetTitle(updatedBook.GetTitle());
+            existingBook.SetAuthor(updatedBook.GetAuthor());
+
             Save(books);
         }
 

@@ -18,7 +18,8 @@ class Program
             Console.WriteLine("1 - Show Books");
             Console.WriteLine("2 - Add Book");
             Console.WriteLine("3 - Find Book by ID");
-            Console.WriteLine("4 - Delete Book"); // 🔥 NEW
+            Console.WriteLine("4 - Delete Book");
+            Console.WriteLine("5 - Update Book"); // 🔥 NEW
             Console.WriteLine("0 - Exit");
             Console.Write("Choose: ");
 
@@ -83,7 +84,7 @@ class Program
                     Console.WriteLine("Book not found!");
                 }
             }
-            else if (choice == "4") // 🔥 DELETE
+            else if (choice == "4")
             {
                 Console.Write("Enter book ID to delete: ");
                 int id = int.Parse(Console.ReadLine() ?? "0");
@@ -92,6 +93,40 @@ class Program
                 {
                     service.Delete(id);
                     Console.WriteLine("Book deleted successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+            else if (choice == "5") // 🔥 UPDATE
+            {
+                Console.Write("Enter book ID to update: ");
+                int id = int.Parse(Console.ReadLine() ?? "0");
+
+                var existingBook = service.GetById(id);
+
+                if (existingBook == null)
+                {
+                    Console.WriteLine("Book not found!");
+                    continue;
+                }
+
+                Console.Write("Enter new title: ");
+                string title = Console.ReadLine() ?? "";
+
+                Console.Write("Enter new author: ");
+                string author = Console.ReadLine() ?? "";
+
+                Book updatedBook = new Book();
+                updatedBook.SetId(id);
+                updatedBook.SetTitle(title);
+                updatedBook.SetAuthor(author);
+
+                try
+                {
+                    service.Update(updatedBook);
+                    Console.WriteLine("Book updated successfully!");
                 }
                 catch (Exception ex)
                 {

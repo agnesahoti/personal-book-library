@@ -77,15 +77,12 @@ personal-book-library/
 │   │   └── PersonalBookLibrary.csproj
 │   │
 │   └── frontend/
-    ├── index.html
-    │
-    ├── css/
-    │   └── style.css
-    │
-    └── js/
-        └── script.js
+│       ├── index.html
+│       ├── css/
+│       │   └── style.css
+│       └── js/
+│           └── script.js
 │      
-│
 ├── README.md
 └── .gitignore
 ```

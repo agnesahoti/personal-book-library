@@ -9,12 +9,22 @@ Ky projekt është krijuar si pjesë e një detyre universitare për të praktik
 ---
 
 ## ✨ Features
-- ➕ Add a new book to the library
-- 📚 View the list of books
-- 🔎 Search books by title
-- ✅ Mark books as read
-- ❌ Delete books from the library
+## 🚀 Features
 
+- 📚 Show all books
+- ➕ Add new book
+- 🔍 Find book by ID
+- ✏️ Update book
+- ❌ Delete book
+- 🔎 Filter books by author
+
+## 🧱 Architecture
+
+Project is organized using:
+- Models
+- Services
+- Data (Repository Pattern)
+- UI (Console)
 ---
 
 ## 👤 User Stories
@@ -39,33 +49,42 @@ This project plans to use the following technologies:
 ##  📂 Project Structure
 
 ```
-personal-book-library
+## 📁 Project Structure
+
+personal-book-library/
 │
-├── README.md
-├── .gitignore
-│
-├── docs
+├── docs/
+│   ├── architecture.md
 │   ├── class-diagram.md
 │   ├── class-diagram.png
-│   └── architecture.md
+│   ├── implementation.md
+│   └── implementation-screenshot.png
 │
-└── src
-    ├── backend
-    │   ├── Models
-    │   │    └── Book.cs
-    │   │
-    │   ├── Services
-    │   │    └── BookService.cs
-    │   │
-    │   ├── Data
-    │   │    ├── IRepository.cs
-    │   │    ├── BookRepository.cs
-    │   │    └── FileRepository.cs
-    │   │
-    │   └── Program.cs
-    │
-    └── frontend
-        └── index.html
+├── src/
+│   ├── backend/
+│   │   ├── Data/
+│   │   │   ├── FileRepository.cs
+│   │   │   ├── IRepository.cs
+│   │   │   └── books.csv
+│   │   │
+│   │   ├── Models/
+│   │   │   └── Book.cs
+│   │   │
+│   │   ├── Services/
+│   │   │   └── BookService.cs
+│   │   │
+│   │   ├── Program.cs
+│   │   └── PersonalBookLibrary.csproj
+│   │
+│   └── frontend/
+│       ├── index.html
+│       ├── css/
+│       │   └── style.css
+│       └── js/
+│           └── script.js
+│      
+├── README.md
+└── .gitignore
 ```
 ## 🧩 Frontend & Backend
 

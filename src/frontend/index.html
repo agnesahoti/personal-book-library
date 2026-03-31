@@ -1,13 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Book Library</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>📚 Personal Book Library</h1>
+    <div class="container">
 
-<p>This is the first version of my personal book library project.</p>
+        <!-- HEADER -->
+        <h1>📚 Personal Book Library</h1>
 
-</body>
-</html>
+        <!-- ADD BOOK -->
+        <div class="card">
+            <h2>Add Book</h2>
+
+            <input id="title" placeholder="Enter book title">
+            <input id="author" placeholder="Enter author name">
+
+            <button onclick="addBook()">Add Book</button>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="card">
+            <h2>Search by Author</h2>
+
+            <input id="search" onkeyup="searchBooks()" placeholder="Search author...">
+        </div>
+
+        <!-- BOOK LIST -->
+        <div class="card">
+            <h2>Book List</h2>
+
+            <div id="bookList"></div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>© 2026 Personal Book Library | Made by You 🚀</p>
+        </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="js/script.js"></script>

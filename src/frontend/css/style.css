@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+    padding: 20px;
+}
+
+/* Container */
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Buttons */
+button {
+    background: #38bdf8;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: #020617;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0ea5e9;
+}
+
+/* Input */
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin: 5px 0;
+    width: 100%;
+}
+
+/* Book list */
+.book {
+    background: #020617;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #94a3b8;
+}

@@ -39,33 +39,38 @@ This project plans to use the following technologies:
 ##  📂 Project Structure
 
 ```
-personal-book-library
+## 📁 Project Structure
+
+personal-book-library/
 │
-├── README.md
-├── .gitignore
-│
-├── docs
+├── docs/
+│   ├── architecture.md
 │   ├── class-diagram.md
 │   ├── class-diagram.png
-│   └── architecture.md
+│   ├── implementation.md
+│   └── implementation-screenshot.png
 │
-└── src
-    ├── backend
-    │   ├── Models
-    │   │    └── Book.cs
-    │   │
-    │   ├── Services
-    │   │    └── BookService.cs
-    │   │
-    │   ├── Data
-    │   │    ├── IRepository.cs
-    │   │    ├── BookRepository.cs
-    │   │    └── FileRepository.cs
-    │   │
-    │   └── Program.cs
-    │
-    └── frontend
-        └── index.html
+├── src/
+│   ├── backend/
+│   │   ├── Data/
+│   │   │   ├── FileRepository.cs
+│   │   │   ├── IRepository.cs
+│   │   │   └── books.csv
+│   │   │
+│   │   ├── Models/
+│   │   │   └── Book.cs
+│   │   │
+│   │   ├── Services/
+│   │   │   └── BookService.cs
+│   │   │
+│   │   ├── Program.cs
+│   │   └── PersonalBookLibrary.csproj
+│   │
+│   └── frontend/
+│       └── index.html
+│
+├── README.md
+└── .gitignore
 ```
 ## 🧩 Frontend & Backend
 

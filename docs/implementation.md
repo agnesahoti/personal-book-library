@@ -57,6 +57,7 @@ Rrjedha e funksionimit është si më poshtë:
 2 - Add Book
 3 - Find Book by ID
 4 - Delete Book
+5 - Update Book
 0 - Exit
 ```
 

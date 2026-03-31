@@ -9,12 +9,22 @@ Ky projekt është krijuar si pjesë e një detyre universitare për të praktik
 ---
 
 ## ✨ Features
-- ➕ Add a new book to the library
-- 📚 View the list of books
-- 🔎 Search books by title
-- ✅ Mark books as read
-- ❌ Delete books from the library
+## 🚀 Features
 
+- 📚 Show all books
+- ➕ Add new book
+- 🔍 Find book by ID
+- ✏️ Update book
+- ❌ Delete book
+- 🔎 Filter books by author
+
+## 🧱 Architecture
+
+Project is organized using:
+- Models
+- Services
+- Data (Repository Pattern)
+- UI (Console)
 ---
 
 ## 👤 User Stories

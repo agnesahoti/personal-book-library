@@ -19,18 +19,17 @@ class Program
             Console.WriteLine("2 - Add Book");
             Console.WriteLine("3 - Find Book by ID");
             Console.WriteLine("4 - Delete Book");
-            Console.WriteLine("5 - Update Book"); // 🔥 NEW
+            Console.WriteLine("5 - Update Book");
+            Console.WriteLine("6 - Search Books 🔍"); // ✅ FEATURE
             Console.WriteLine("0 - Exit");
             Console.Write("Choose: ");
 
             string choice = Console.ReadLine() ?? "";
 
+            // 🔹 SHOW BOOKS
             if (choice == "1")
             {
-                Console.Write("\nFilter by author (leave empty for all): ");
-                string filter = Console.ReadLine() ?? "";
-
-                var books = service.GetAll(filter);
+                var books = service.GetAll();
 
                 Console.WriteLine("\n=== BOOK LIST ===\n");
 
@@ -42,10 +41,12 @@ class Program
                 {
                     foreach (var book in books)
                     {
-                        Console.WriteLine($"{book.GetId()} - {book.GetTitle()} - {book.GetAuthor()}");
+                        Console.WriteLine($"{book.Id} - {book.Title} - {book.Author}");
                     }
                 }
             }
+
+            // 🔹 ADD
             else if (choice == "2")
             {
                 Console.Write("Enter title: ");
@@ -54,9 +55,11 @@ class Program
                 Console.Write("Enter author: ");
                 string author = Console.ReadLine() ?? "";
 
-                Book newBook = new Book();
-                newBook.SetTitle(title);
-                newBook.SetAuthor(author);
+                Book newBook = new Book
+                {
+                    Title = title,
+                    Author = author
+                };
 
                 try
                 {
@@ -68,6 +71,8 @@ class Program
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
+
+            // 🔹 GET BY ID
             else if (choice == "3")
             {
                 Console.Write("Enter book ID: ");
@@ -77,13 +82,15 @@ class Program
 
                 if (book != null)
                 {
-                    Console.WriteLine($"{book.GetId()} - {book.GetTitle()} - {book.GetAuthor()}");
+                    Console.WriteLine($"{book.Id} - {book.Title} - {book.Author}");
                 }
                 else
                 {
                     Console.WriteLine("Book not found!");
                 }
             }
+
+            // 🔹 DELETE
             else if (choice == "4")
             {
                 Console.Write("Enter book ID to delete: ");
@@ -99,7 +106,9 @@ class Program
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            else if (choice == "5") // 🔥 UPDATE
+
+            // 🔹 UPDATE
+            else if (choice == "5")
             {
                 Console.Write("Enter book ID to update: ");
                 int id = int.Parse(Console.ReadLine() ?? "0");
@@ -118,10 +127,12 @@ class Program
                 Console.Write("Enter new author: ");
                 string author = Console.ReadLine() ?? "";
 
-                Book updatedBook = new Book();
-                updatedBook.SetId(id);
-                updatedBook.SetTitle(title);
-                updatedBook.SetAuthor(author);
+                Book updatedBook = new Book
+                {
+                    Id = id,
+                    Title = title,
+                    Author = author
+                };
 
                 try
                 {
@@ -133,11 +144,37 @@ class Program
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
+
+            // 🔍 SEARCH FEATURE
+            else if (choice == "6")
+            {
+                Console.Write("Search (title or author): ");
+                string term = Console.ReadLine() ?? "";
+
+                var results = service.Search(term);
+
+                Console.WriteLine("\n=== SEARCH RESULTS ===\n");
+
+                if (results.Count == 0)
+                {
+                    Console.WriteLine("No books found!");
+                }
+                else
+                {
+                    foreach (var book in results)
+                    {
+                        Console.WriteLine($"{book.Id} - {book.Title} - {book.Author}");
+                    }
+                }
+            }
+
+            // 🔹 EXIT
             else if (choice == "0")
             {
                 Console.WriteLine("Goodbye!");
                 break;
             }
+
             else
             {
                 Console.WriteLine("Invalid option!");

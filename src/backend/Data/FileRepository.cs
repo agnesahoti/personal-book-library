@@ -14,27 +14,39 @@ namespace PersonalBookLibrary.Data
         {
             var books = new List<Book>();
 
-            if (!File.Exists(filePath))
-                return books;
-
-            var lines = File.ReadAllLines(filePath);
-
-            foreach (var line in lines)
+            try
             {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
+                if (!File.Exists(filePath))
+                {
+                    Console.WriteLine("File nuk u gjet, po krijohet një i ri...");
+                    Directory.CreateDirectory("Data");
+                    File.Create(filePath).Close();
+                    return books;
+                }
 
-                var parts = line.Split(',');
+                var lines = File.ReadAllLines(filePath);
 
-                if (parts.Length < 3)
-                    continue;
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
 
-                Book book = new Book();
-                book.SetId(int.Parse(parts[0]));
-                book.SetTitle(parts[1]);
-                book.SetAuthor(parts[2]);
+                    var parts = line.Split(',');
 
-                books.Add(book);
+                    if (parts.Length < 3)
+                        continue;
+
+                    books.Add(new Book
+                    {
+                        Id = int.Parse(parts[0]),
+                        Title = parts[1],
+                        Author = parts[2]
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Gabim gjatë leximit të file: " + ex.Message);
             }
 
             return books;
@@ -42,7 +54,7 @@ namespace PersonalBookLibrary.Data
 
         public Book GetById(int id)
         {
-            return GetAll().FirstOrDefault(b => b.GetId() == id);
+            return GetAll().FirstOrDefault(b => b.Id == id);
         }
 
         public void Add(Book book)
@@ -52,46 +64,48 @@ namespace PersonalBookLibrary.Data
             Save(books);
         }
 
-        // 🔥 UPDATE METHOD
         public void Update(Book updatedBook)
         {
             var books = GetAll();
 
-            var existingBook = books.FirstOrDefault(b => b.GetId() == updatedBook.GetId());
+            var existingBook = books.FirstOrDefault(b => b.Id == updatedBook.Id);
 
             if (existingBook == null)
                 throw new Exception("Book not found!");
 
-            existingBook.SetTitle(updatedBook.GetTitle());
-            existingBook.SetAuthor(updatedBook.GetAuthor());
+            existingBook.Title = updatedBook.Title;
+            existingBook.Author = updatedBook.Author;
 
             Save(books);
         }
 
-        // 🔥 DELETE METHOD
         public void Delete(int id)
         {
             var books = GetAll();
 
-            var bookToRemove = books.FirstOrDefault(b => b.GetId() == id);
+            var bookToRemove = books.FirstOrDefault(b => b.Id == id);
 
-            if (bookToRemove != null)
+            if (bookToRemove == null)
             {
-                books.Remove(bookToRemove);
-                Save(books);
+                Console.WriteLine("Libri nuk u gjet!");
+                return;
             }
+
+            books.Remove(bookToRemove);
+            Save(books);
         }
 
         public void Save(List<Book> books)
         {
-            var lines = new List<string>();
-
-            foreach (var book in books)
+            try
             {
-                lines.Add($"{book.GetId()},{book.GetTitle()},{book.GetAuthor()}");
+                var lines = books.Select(b => $"{b.Id},{b.Title},{b.Author}");
+                File.WriteAllLines(filePath, lines);
             }
-
-            File.WriteAllLines(filePath, lines);
+            catch (Exception ex)
+            {
+                Console.WriteLine("Gabim gjatë ruajtjes: " + ex.Message);
+            }
         }
     }
 }

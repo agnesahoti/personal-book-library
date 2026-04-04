@@ -15,52 +15,59 @@ namespace PersonalBookLibrary.Services
             _repository = repo;
         }
 
-        // Listo + filter
-        public List<Book> GetAll(string authorFilter = "")
+        // 🔍 SEARCH FEATURE (kryesorja)
+        public List<Book> Search(string term)
         {
             var books = _repository.GetAll();
 
-            if (!string.IsNullOrWhiteSpace(authorFilter))
-            {
-                books = books
-                    .Where(b => b.GetAuthor().ToLower().Contains(authorFilter.ToLower()))
-                    .ToList();
-            }
+            if (string.IsNullOrWhiteSpace(term))
+                return books;
 
-            return books;
+            return books
+                .Where(b =>
+                    b.Title.ToLower().Contains(term.ToLower()) ||
+                    b.Author.ToLower().Contains(term.ToLower())
+                )
+                .ToList();
         }
 
-        // Shto me validim
+        // LIST ALL (pa filter)
+        public List<Book> GetAll()
+        {
+            return _repository.GetAll();
+        }
+
+        // ADD
         public void Add(Book book)
         {
-            if (string.IsNullOrWhiteSpace(book.GetTitle()))
+            if (string.IsNullOrWhiteSpace(book.Title))
                 throw new Exception("Title cannot be empty!");
 
-            if (string.IsNullOrWhiteSpace(book.GetAuthor()))
+            if (string.IsNullOrWhiteSpace(book.Author))
                 throw new Exception("Author cannot be empty!");
 
             var books = _repository.GetAll();
-            book.SetId(books.Count + 1);
+            book.Id = books.Count + 1;
 
             _repository.Add(book);
         }
 
-        // Gjej sipas ID
+        // GET BY ID
         public Book GetById(int id)
         {
             return _repository.GetById(id);
         }
 
-        // 🔥 UPDATE
+        // UPDATE
         public void Update(Book book)
         {
-            if (string.IsNullOrWhiteSpace(book.GetTitle()))
+            if (string.IsNullOrWhiteSpace(book.Title))
                 throw new Exception("Title cannot be empty!");
 
-            if (string.IsNullOrWhiteSpace(book.GetAuthor()))
+            if (string.IsNullOrWhiteSpace(book.Author))
                 throw new Exception("Author cannot be empty!");
 
-            var existingBook = _repository.GetById(book.GetId());
+            var existingBook = _repository.GetById(book.Id);
 
             if (existingBook == null)
                 throw new Exception("Book not found!");
@@ -68,7 +75,7 @@ namespace PersonalBookLibrary.Services
             _repository.Update(book);
         }
 
-        // 🔥 DELETE
+        // DELETE
         public void Delete(int id)
         {
             var book = _repository.GetById(id);

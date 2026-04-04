@@ -1,50 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Book Library</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-    <div class="container">
-
-        <!-- HEADER -->
-        <h1>📚 Personal Book Library</h1>
-
-        <!-- ADD BOOK -->
-        <div class="card">
-            <h2>Add Book</h2>
-
-            <input id="title" placeholder="Enter book title">
-            <input id="author" placeholder="Enter author name">
-
-            <button onclick="addBook()">Add Book</button>
-        </div>
-
-        <!-- SEARCH -->
-        <div class="card">
-            <h2>Search by Author</h2>
-
-            <input id="search" onkeyup="searchBooks()" placeholder="Search author...">
-        </div>
-
-        <!-- BOOK LIST -->
-        <div class="card">
-            <h2>Book List</h2>
-
-            <div id="bookList"></div>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="footer">
-            <p>© 2026 Personal Book Library | Made by You 🚀</p>
-        </div>
-
+ 
+  <!-- ── NAVIGATION ── -->
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-icon">📚</div>
+      <span class="nav-title">Personal Library</span>
     </div>
-
-    <!-- JS -->
-    <script src="js/script.js"></script>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+ 
+  <!-- ── HERO ── -->
+  <div class="hero" id="home">
+    <div class="hero-deco"></div>
+    <div class="hero-eyebrow">Your Reading Universe</div>
+    <h1>Curate your<br><em>personal</em><br>collection.</h1>
+    <p class="hero-sub">Every great library begins with a single book. Add yours, organize, and rediscover the joy of reading.</p>
+  </div>
+ 
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total Books</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-authors">0</div>
+      <div class="stat-label">Authors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-recent">—</div>
+      <div class="stat-label">Latest Add</div>
+    </div>
+  </div>
+ 
+  <div class="section-divider"></div>
+ 
+  <!-- ── MAIN LAYOUT ── -->
+  <div class="main" id="collection">
+ 
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+ 
+      <!-- ADD BOOK CARD -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">✦</div>
+          Add New Book
+        </div>
+        <div class="field">
+          <label>Book Title</label>
+          <input type="text" id="add-title" placeholder="e.g. The Great Gatsby">
+        </div>
+        <div class="field">
+          <label>Author</label>
+          <input type="text" id="add-author" placeholder="e.g. F. Scott Fitzgerald">
+        </div>
+        <div class="field">
+          <label>Genre (optional)</label>
+          <input type="text" id="add-genre" placeholder="e.g. Fiction, Science...">
+        </div>
+        <button class="btn-primary" id="add-btn"><span>+ Add to Library</span></button>
+      </div>
+ 
+      <!-- SEARCH CARD -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">⌕</div>
+          Search & Filter
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" id="search-input" placeholder="Search title or author...">
+        </div>
+        <div class="filter-chips" id="genre-chips">
+          <button class="chip active" data-genre="all">All</button>
+        </div>
+      </div>
+ 
+    </aside>
+ 
+    <!-- BOOK LIST -->
+    <main class="booklist-section">
+      <div class="booklist-header">
+        <div class="booklist-title" id="list-heading">Book List</div>
+        <div class="view-toggle">
+          <button class="view-btn active" title="List view">☰</button>
+          <button class="view-btn" title="Grid view">⊞</button>
+        </div>
+      </div>
+ 
+      <div class="books-grid" id="books-grid"></div>
+ 
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📖</div>
+        <div class="empty-title">Your library is empty</div>
+        <p class="empty-sub">Add your first book using the form on the left.</p>
+      </div>
+    </main>
+ 
+  </div><!-- /.main -->
+ 
+  <!-- ── ABOUT SECTION ── -->
+  <section class="about-section" id="about">
+    <div class="about-inner">
+      <div class="about-text">
+        <div class="hero-eyebrow">About This App</div>
+        <h2 class="about-title">Built for <em>book lovers</em>,<br>by book lovers.</h2>
+        <p class="about-desc">Personal Library is a simple, elegant tool to keep track of every book you own, have read, or plan to read. No accounts, no clutter — just you and your books.</p>
+        <ul class="about-features">
+          <li><span class="feat-icon">✦</span> Add books with title, author and genre</li>
+          <li><span class="feat-icon">✦</span> Search and filter your collection instantly</li>
+          <li><span class="feat-icon">✦</span> Edit or remove books at any time</li>
+          <li><span class="feat-icon">✦</span> Tracks your total books and authors</li>
+        </ul>
+      </div>
+      <div class="about-visual">
+        <div class="about-shelf">
+          <div class="shelf-book s1">C</div>
+          <div class="shelf-book s2">A</div>
+          <div class="shelf-book s3">P</div>
+          <div class="shelf-book s4">D</div>
+          <div class="shelf-book s5">T</div>
+          <div class="shelf-book s6">M</div>
+        </div>
+        <div class="shelf-plank"></div>
+        <p class="about-quote">"A reader lives a thousand lives before he dies."</p>
+        <p class="about-quote-author">— George R.R. Martin</p>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ── TOAST NOTIFICATION ── -->
+  <div class="toast" id="toast">
+    <div class="toast-dot"></div>
+    <span id="toast-msg">Book added!</span>
+  </div>
+ 
+  <!-- ── EDIT MODAL ── -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-title">Edit Book</div>
+      <div class="field">
+        <label>Book Title</label>
+        <input type="text" id="edit-title" placeholder="Book title">
+      </div>
+      <div class="field">
+        <label>Author</label>
+        <input type="text" id="edit-author" placeholder="Author name">
+      </div>
+      <div class="field">
+        <label>Genre</label>
+        <input type="text" id="edit-genre" placeholder="Genre">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn-save" id="modal-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+ 
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -36,9 +36,13 @@ namespace PersonalBookLibrary.Data
                     if (parts.Length < 3)
                         continue;
 
+                    // ✅ FIX: mos me crash në parse
+                    if (!int.TryParse(parts[0], out int id))
+                        continue;
+
                     books.Add(new Book
                     {
-                        Id = int.Parse(parts[0]),
+                        Id = id,
                         Title = parts[1],
                         Author = parts[2]
                     });
@@ -52,7 +56,7 @@ namespace PersonalBookLibrary.Data
             return books;
         }
 
-        public Book GetById(int id)
+        public Book? GetById(int id)
         {
             return GetAll().FirstOrDefault(b => b.Id == id);
         }
@@ -99,6 +103,8 @@ namespace PersonalBookLibrary.Data
         {
             try
             {
+                Directory.CreateDirectory("Data"); // ✅ siguri ekstra
+
                 var lines = books.Select(b => $"{b.Id},{b.Title},{b.Author}");
                 File.WriteAllLines(filePath, lines);
             }

@@ -53,7 +53,7 @@ namespace PersonalBookLibrary.Services
         }
 
         // GET BY ID
-        public Book GetById(int id)
+        public Book? GetById(int id)
         {
             return _repository.GetById(id);
         }

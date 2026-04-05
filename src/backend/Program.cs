@@ -22,7 +22,7 @@ class Program
                 Console.WriteLine("3 - Find Book by ID");
                 Console.WriteLine("4 - Delete Book");
                 Console.WriteLine("5 - Update Book");
-                Console.WriteLine("6 - Search Books 🔍");
+                Console.WriteLine("6 - Search Books");
                 Console.WriteLine("0 - Exit");
                 Console.Write("Choose: ");
 

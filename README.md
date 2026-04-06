@@ -1,56 +1,83 @@
-# 📚 Personal Book Library
+# 📖 Biblioteka Personale e Librave
 
-## 📖 Project Description
-Personal Book Library është një aplikacion i thjeshtë që ndihmon përdoruesit të menaxhojnë librat e tyre personalë.  
-Përdoruesi mund të shtojë libra të rinj, të kërkojë libra në listë, të shënojë librat si të lexuar dhe të fshijë libra nga koleksioni.
-
-Ky projekt është krijuar si pjesë e një detyre universitare për të praktikuar zhvillimin e aplikacioneve dhe përdorimin e **Git** dhe **GitHub** për menaxhimin e versioneve të projektit.
+Një aplikacion i thjeshtë në **C# (.NET)** që mundëson menaxhimin e librave personalë përmes një console interface.
 
 ---
 
-## ✨ Features
-## 🚀 Features
+# 🚀 Përshkrimi
 
-- 📚 Show all books
-- ➕ Add new book
-- 🔍 Find book by ID
-- ✏️ Update book
-- ❌ Delete book
-- 🔎 Filter books by author
+**Biblioteka Personale e Librave** është një aplikacion që i lejon përdoruesit të:
 
-## 🧱 Architecture
+- Menaxhojnë koleksionin e librave
+- Kryejnë operacione bazike (CRUD)
+- Kërkojnë libra shpejt
+- Ruajnë të dhënat në file
+- Sigurojnë funksionim korrekt përmes **error handling** dhe **unit testing**
 
-Project is organized using:
-- Models
-- Services
-- Data (Repository Pattern)
-- UI (Console)
----
-
-## 👤 User Stories
-- As a user, I want to **add a book** so that I can keep track of my library.
-- As a user, I want to **search for a book** so that I can find it quickly.
-- As a user, I want to **mark a book as read** so that I know which books I have finished.
-- As a user, I want to **delete a book** so that I can remove books I no longer want.
+Ky projekt demonstron përdorimin e arkitekturës së pastër dhe praktikave të mira si:
+- Repository Pattern  
+- Separation of Concerns  
+- Unit Testing  
 
 ---
 
-## 🛠 Technologies Planned
-This project plans to use the following technologies:
+# ✨ Funksionalitetet
 
-- 🌐 HTML
-- 🎨 CSS
-- ⚡ JavaScript
-- 🧰 Git
-- ☁️ GitHub
+## 📚 Funksione Kryesore
+- Shfaq të gjithë librat  
+- Shto libër të ri  
+- Gjej libër sipas ID  
+- Përditëso libër  
+- Fshi libër  
+- Kërko libra (sipas titullit ose autorit)  
+
+## 🛡 Menaxhimi i Gabimeve
+- Validim i inputeve (p.sh. ID jo valid)
+- Krijim automatik i file nëse mungon
+- Trajtim i exception-eve gjatë operacioneve  
+
+## 💾 Ruajtja e të Dhënave
+- Librat ruhen në file `.csv`
+- Të dhënat lexohen dhe ruhen automatikisht  
+
+## 🧪 Testimi
+- Test për shtimin e librave  
+- Test për gjetjen sipas ID  
+- Test për fshirjen e librave  
 
 ---
 
-##  📂 Project Structure
+# 🧱 Arkitektura
+
+Projekti është i organizuar në shtresa:
+
+- **Models** → Strukturat e të dhënave (Book)  
+- **Services** → Logjika e biznesit (BookService)  
+- **Data** → Qasja në të dhëna (Repository Pattern)  
+- **UI** → Ndërfaqja (Console - Program.cs)  
+
+---
+
+# 🧩 Teknologjitë e Përdorura
+
+## 🔧 Backend
+- C# (.NET 7)
+- Console Application
+- File Handling (CSV)
+
+## 🧪 Testimi
+- xUnit
+
+## 🛠 Tools
+- Git  
+- GitHub  
+- VS Code  
+
+---
+
+# 📂 Struktura e Projektit
 
 ```
-## 📁 Project Structure
-
 personal-book-library/
 │
 ├── docs/
@@ -83,16 +110,71 @@ personal-book-library/
 │       └── js/
 │           └── script.js
 │      
+├── PersonalBookLibrary.Tests/
+│   └── UnitTest1.cs
+│
 ├── README.md
 └── .gitignore
 ```
-## 🧩 Frontend & Backend
 
-- Frontend: located in `src/frontend` (index.html)
-- Backend: located in `src/backend` (Models, Services, Data, Program.cs)
+---
+
+# ▶️ Si të Ekzekutohet
+
+## 🔹 Ekzekutimi i aplikacionit
+
+```bash
+cd src/backend
+dotnet run
 ```
 
-## 👩‍💻 Student
-**Agnesa Hoti**
+## 🧪 Ekzekutimi i testeve
 
-University Assignment – 2026 🎓
+```bash
+cd PersonalBookLibrary.Tests
+dotnet test
+```
+
+---
+
+# 👤 User Stories
+
+- Si përdorues, dua të shtoj libra që të menaxhoj koleksionin tim  
+- Si përdorues, dua të kërkoj libra që t’i gjej më shpejt  
+- Si përdorues, dua të përditësoj librat  
+- Si përdorues, dua të fshij librat që nuk më duhen  
+
+---
+
+# 📸 Screenshots
+
+*(Opsionale – mund të shtosh foto nga aplikacioni yt)*
+
+---
+
+# 📈 Përmirësime në të Ardhmen
+
+- Shtimi i kategorive/genre  
+- Statusi "i lexuar / jo i lexuar"  
+- Ndërtimi i një GUI (WinForms / Web App)  
+- Lidhja me databazë (SQL Server)  
+
+---
+
+# 👩‍💻 Autori
+
+**Agnesa Hoti**  
+🎓 Projekt Universitar – 2026  
+
+---
+
+# ⭐ Shënime Finale
+
+Ky projekt demonstron:
+
+✔ Strukturë të pastër të kodit  
+✔ Menaxhim të gabimeve  
+✔ Ruajtje të të dhënave në file  
+✔ Implementim të unit tests  
+
+👉 Një bazë shumë e mirë për projekte më të avancuara 🚀

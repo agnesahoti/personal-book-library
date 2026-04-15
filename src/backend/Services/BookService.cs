@@ -15,7 +15,7 @@ namespace PersonalBookLibrary.Services
             _repository = repo;
         }
 
-        // 🔍 SEARCH FEATURE (kryesorja)
+        // 🔍 SEARCH
         public List<Book> Search(string term)
         {
             var books = _repository.GetAll();
@@ -23,49 +23,65 @@ namespace PersonalBookLibrary.Services
             if (string.IsNullOrWhiteSpace(term))
                 return books;
 
+            term = term.ToLower();
+
             return books
                 .Where(b =>
-                    b.Title.ToLower().Contains(term.ToLower()) ||
-                    b.Author.ToLower().Contains(term.ToLower())
+                    b.Title.ToLower().Contains(term) ||
+                    b.Author.ToLower().Contains(term)
                 )
                 .ToList();
         }
 
-        // LIST ALL (pa filter)
+        // 📄 GET ALL
         public List<Book> GetAll()
         {
             return _repository.GetAll();
         }
 
-        // ADD
+        // ➕ ADD (ME VALIDIM TË PËRMIRËSUAR)
         public void Add(Book book)
         {
-            if (string.IsNullOrWhiteSpace(book.Title))
-                throw new Exception("Title cannot be empty!");
+            if (book == null)
+                throw new Exception("Book cannot be null!");
 
-            if (string.IsNullOrWhiteSpace(book.Author))
-                throw new Exception("Author cannot be empty!");
+            if (string.IsNullOrWhiteSpace(book.Title) || book.Title.Length < 2)
+                throw new Exception("Title must have at least 2 characters!");
+
+            if (string.IsNullOrWhiteSpace(book.Author) || book.Author.Length < 2)
+                throw new Exception("Author must have at least 2 characters!");
 
             var books = _repository.GetAll();
+
+            // 🚫 DUPLIKATE
+            if (books.Any(b => b.Title.ToLower() == book.Title.ToLower()
+                            && b.Author.ToLower() == book.Author.ToLower()))
+            {
+                throw new Exception("This book already exists!");
+            }
+
             book.Id = books.Count + 1;
 
             _repository.Add(book);
         }
 
-        // GET BY ID
+        // 🔎 GET BY ID
         public Book? GetById(int id)
         {
             return _repository.GetById(id);
         }
 
-        // UPDATE
+        // ✏️ UPDATE
         public void Update(Book book)
         {
-            if (string.IsNullOrWhiteSpace(book.Title))
-                throw new Exception("Title cannot be empty!");
+            if (book == null)
+                throw new Exception("Book cannot be null!");
 
-            if (string.IsNullOrWhiteSpace(book.Author))
-                throw new Exception("Author cannot be empty!");
+            if (string.IsNullOrWhiteSpace(book.Title) || book.Title.Length < 2)
+                throw new Exception("Title must have at least 2 characters!");
+
+            if (string.IsNullOrWhiteSpace(book.Author) || book.Author.Length < 2)
+                throw new Exception("Author must have at least 2 characters!");
 
             var existingBook = _repository.GetById(book.Id);
 
@@ -75,7 +91,7 @@ namespace PersonalBookLibrary.Services
             _repository.Update(book);
         }
 
-        // DELETE
+        // 🗑️ DELETE
         public void Delete(int id)
         {
             var book = _repository.GetById(id);

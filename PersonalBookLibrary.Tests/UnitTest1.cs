@@ -3,6 +3,7 @@ using PersonalBookLibrary.Services;
 using PersonalBookLibrary.Models;
 using PersonalBookLibrary.Data;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BookServiceTests
 {
@@ -50,7 +51,7 @@ public class BookServiceTests
         Assert.Equal("Test Book", result.Title);
     }
 
-    // ✅ TEST 3 (KËTU E SHTON)
+    // ✅ TEST 3
     [Fact]
     public void Delete_ShouldRemoveBook()
     {
@@ -69,6 +70,34 @@ public class BookServiceTests
         var books = service.GetAll();
 
         Assert.Empty(books);
+    }
+
+    // 🔥 TEST 4 (E RE) — SEARCH EXISTING
+    [Fact]
+    public void Search_ExistingBook_ReturnsResult()
+    {
+        var service = GetService();
+
+        service.Add(new Book
+        {
+            Title = "Test Book",
+            Author = "Test Author"
+        });
+
+        var result = service.Search("Test");
+
+        Assert.NotEmpty(result);
+    }
+
+    // 🔥 TEST 5 (E RE) — SEARCH NON EXISTING
+    [Fact]
+    public void Search_NonExistingBook_ReturnsEmpty()
+    {
+        var service = GetService();
+
+        var result = service.Search("NukEkziston");
+
+        Assert.Empty(result);
     }
 }
 
@@ -91,7 +120,7 @@ public class FakeRepository : IRepository<Book>
 
     public void Delete(int id)
     {
-        books.RemoveAll(b => b.Id == id); // 🔥 kjo e bën delete funksional
+        books.RemoveAll(b => b.Id == id);
     }
 
     public void Save(List<Book> items) { }

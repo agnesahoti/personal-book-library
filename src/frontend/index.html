@@ -1,177 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personal Library</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libraria Qendrore</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
  
-  <!-- ── NAVIGATION ── -->
-  <nav>
-    <div class="nav-brand">
-      <div class="nav-icon">📚</div>
-      <span class="nav-title">Personal Library</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#collection">Collection</a></li>
-      <li><a href="#about">About</a></li>
-    </ul>
-  </nav>
- 
-  <!-- ── HERO ── -->
-  <div class="hero" id="home">
-    <div class="hero-deco"></div>
-    <div class="hero-eyebrow">Your Reading Universe</div>
-    <h1>Curate your<br><em>personal</em><br>collection.</h1>
-    <p class="hero-sub">Every great library begins with a single book. Add yours, organize, and rediscover the joy of reading.</p>
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#home">
+    <div class="nav-logo">📚</div>
+    <span class="nav-name">Libraria Qendrore</span>
+  </a>
+  <div class="nav-links">
+    <a href="#home" class="active">Home</a>
+    <a href="#books">Books <span class="nbadge gold" id="nav-books">0</span></a>
+    <a href="#students">Students <span class="nbadge blue" id="nav-students">0</span></a>
+    <a href="#rent">Rent/Borrow <span class="nbadge green" id="nav-rents">0</span></a>
+    <a href="#statistics">Statistics</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#about">About</a>
   </div>
+</nav>
  
-  <!-- ── STATS BAR ── -->
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-num" id="stat-total">0</div>
-      <div class="stat-label">Total Books</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="stat-authors">0</div>
-      <div class="stat-label">Authors</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="stat-recent">—</div>
-      <div class="stat-label">Latest Add</div>
+<!-- HOME -->
+<section id="home">
+  <div class="hero-deco"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Sistemi i Menaxhimit të Bibliotekës</div>
+    <h1 class="hero-h1">Libraria ku<br><em>dijet</em><br>jetojnë.</h1>
+    <p class="hero-sub">Menaxhoni librat, regjistroni studentët dhe gjurmoni huazimet — gjithçka ruhet automatikisht.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="goTo('#books')">Shfleto Librat</button>
+      <button class="btn btn-sec" onclick="goTo('#students')">Regjistro Student</button>
     </div>
   </div>
- 
-  <div class="section-divider"></div>
- 
-  <!-- ── MAIN LAYOUT ── -->
-  <div class="main" id="collection">
- 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
- 
-      <!-- ADD BOOK CARD -->
-      <div class="card">
-        <div class="card-title">
-          <div class="card-title-icon">✦</div>
-          Add New Book
-        </div>
-        <div class="field">
-          <label>Book Title</label>
-          <input type="text" id="add-title" placeholder="e.g. The Great Gatsby">
-        </div>
-        <div class="field">
-          <label>Author</label>
-          <input type="text" id="add-author" placeholder="e.g. F. Scott Fitzgerald">
-        </div>
-        <div class="field">
-          <label>Genre (optional)</label>
-          <input type="text" id="add-genre" placeholder="e.g. Fiction, Science...">
-        </div>
-        <button class="btn-primary" id="add-btn"><span>+ Add to Library</span></button>
-      </div>
- 
-      <!-- SEARCH CARD -->
-      <div class="card">
-        <div class="card-title">
-          <div class="card-title-icon">⌕</div>
-          Search & Filter
-        </div>
-        <div class="search-wrap">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" type="text" id="search-input" placeholder="Search title or author...">
-        </div>
-        <div class="filter-chips" id="genre-chips">
-          <button class="chip active" data-genre="all">All</button>
-        </div>
-      </div>
- 
-    </aside>
- 
-    <!-- BOOK LIST -->
-    <main class="booklist-section">
-      <div class="booklist-header">
-        <div class="booklist-title" id="list-heading">Book List</div>
-        <div class="view-toggle">
-          <button class="view-btn active" title="List view">☰</button>
-          <button class="view-btn" title="Grid view">⊞</button>
-        </div>
-      </div>
- 
-      <div class="books-grid" id="books-grid"></div>
- 
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">📖</div>
-        <div class="empty-title">Your library is empty</div>
-        <p class="empty-sub">Add your first book using the form on the left.</p>
-      </div>
-    </main>
- 
-  </div><!-- /.main -->
- 
-  <!-- ── ABOUT SECTION ── -->
-  <section class="about-section" id="about">
-    <div class="about-inner">
-      <div class="about-text">
-        <div class="hero-eyebrow">About This App</div>
-        <h2 class="about-title">Built for <em>book lovers</em>,<br>by book lovers.</h2>
-        <p class="about-desc">Personal Library is a simple, elegant tool to keep track of every book you own, have read, or plan to read. No accounts, no clutter — just you and your books.</p>
-        <ul class="about-features">
-          <li><span class="feat-icon">✦</span> Add books with title, author and genre</li>
-          <li><span class="feat-icon">✦</span> Search and filter your collection instantly</li>
-          <li><span class="feat-icon">✦</span> Edit or remove books at any time</li>
-          <li><span class="feat-icon">✦</span> Tracks your total books and authors</li>
-        </ul>
-      </div>
-      <div class="about-visual">
-        <div class="about-shelf">
-          <div class="shelf-book s1">C</div>
-          <div class="shelf-book s2">A</div>
-          <div class="shelf-book s3">P</div>
-          <div class="shelf-book s4">D</div>
-          <div class="shelf-book s5">T</div>
-          <div class="shelf-book s6">M</div>
-        </div>
-        <div class="shelf-plank"></div>
-        <p class="about-quote">"A reader lives a thousand lives before he dies."</p>
-        <p class="about-quote-author">— George R.R. Martin</p>
-      </div>
-    </div>
-  </section>
- 
-  <!-- ── TOAST NOTIFICATION ── -->
-  <div class="toast" id="toast">
-    <div class="toast-dot"></div>
-    <span id="toast-msg">Book added!</span>
-  </div>
- 
-  <!-- ── EDIT MODAL ── -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <div class="modal-title">Edit Book</div>
-      <div class="field">
-        <label>Book Title</label>
-        <input type="text" id="edit-title" placeholder="Book title">
-      </div>
-      <div class="field">
-        <label>Author</label>
-        <input type="text" id="edit-author" placeholder="Author name">
-      </div>
-      <div class="field">
-        <label>Genre</label>
-        <input type="text" id="edit-genre" placeholder="Genre">
-      </div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="modal-cancel">Cancel</button>
-        <button class="btn-save" id="modal-save">Save Changes</button>
-      </div>
+  <div class="hero-right">
+    <div class="hero-card-stack">
+      <div class="hcard hc1"><span class="hcard-icon">📚</span><div class="hcard-num" id="h-books">0</div><div class="hcard-lbl">Libra Total</div></div>
+      <div class="hcard hc2"><span class="hcard-icon">👥</span><div class="hcard-num" id="h-students">0</div><div class="hcard-lbl">Studentë</div></div>
+      <div class="hcard hc3"><span class="hcard-icon">🤝</span><div class="hcard-num" id="h-rents">0</div><div class="hcard-lbl">Huazime Aktive</div></div>
+      <div class="hcard hc4"><span class="hcard-icon">💰</span><div class="hcard-num" id="h-revenue">€0</div><div class="hcard-lbl">Të Ardhura</div></div>
     </div>
   </div>
+</section>
  
-  <script src="js/script.js"></script>
+<!-- BOOKS -->
+<section id="books">
+  <div class="sec-header" style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="sec-eyebrow">Katalogu i Librave</div>
+      <h2 class="sec-title">Të gjithë <em>librat</em></h2>
+    </div>
+    <button class="btn btn-export" onclick="exportCSV('books')">📥 Eksporto CSV</button>
+  </div>
+ 
+  <div class="panel">
+    <div class="panel-title"><span class="p-icon">➕</span> Shto Libër të Ri</div>
+    <div class="form-grid">
+      <div class="ff"><label>Titulli *</label><input id="b-title" type="text" placeholder="p.sh. Fizikë Kuantike"></div>
+      <div class="ff"><label>Autori *</label><input id="b-author" type="text" placeholder="p.sh. Richard Feynman"></div>
+      <div class="ff"><label>Zhanri / Lënda</label>
+        <select id="b-genre">
+          <option value="">— Zgjidh —</option>
+          <option>Matematikë</option><option>Fizikë</option><option>Kimi</option>
+          <option>Biologji</option><option>Histori</option><option>Letërsi</option>
+          <option>Filozofi</option><option>Ekonomi</option><option>Teknologji</option>
+          <option>Fiction</option><option>Tjetër</option>
+        </select>
+      </div>
+      <div class="ff"><label>Çmimi Normal (€)</label><input id="b-price" type="number" min="0" step="0.5" placeholder="p.sh. 15.00"></div>
+      <div class="ff"><label>Çmimi Student (€)</label><input id="b-price-s" type="number" min="0" step="0.5" placeholder="p.sh. 8.00 (ose lërë bosh për 50%)"></div>
+      <div class="ff"><label>Kopje në Stok</label><input id="b-stock" type="number" min="1" value="1"></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="addBook()">+ Shto Libër</button>
+  </div>
+ 
+  <div class="toolbar">
+    <div class="search-box"><span class="si">🔍</span><input id="b-search" type="text" placeholder="Kërko titull ose autor..." oninput="renderBooks()"></div>
+    <select class="fsel" id="b-genre-filter" onchange="renderBooks()">
+      <option value="">Të gjitha lëndët</option>
+      <option>Matematikë</option><option>Fizikë</option><option>Kimi</option>
+      <option>Biologji</option><option>Histori</option><option>Letërsi</option>
+      <option>Filozofi</option><option>Ekonomi</option><option>Teknologji</option>
+      <option>Fiction</option><option>Tjetër</option>
+    </select>
+    <select class="fsel" id="b-sort" onchange="renderBooks()">
+      <option value="default">Renditja Default</option>
+      <option value="az">A → Z</option>
+      <option value="price-asc">Çmimi ↑</option>
+      <option value="price-desc">Çmimi ↓</option>
+      <option value="stock">Stoku ↑</option>
+    </select>
+  </div>
+ 
+  <div class="books-grid" id="books-grid"></div>
+  <div class="empty" id="books-empty"><div class="ei">📖</div><div class="et">Nuk ka libra</div><p class="es">Shto librin e parë.</p></div>
+</section>
+ 
+<!-- STUDENTS -->
+<section id="students">
+  <div class="sec-header" style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="sec-eyebrow">Menaxhimi i Studentëve</div>
+      <h2 class="sec-title">Studentët e <em>regjistruar</em></h2>
+    </div>
+    <button class="btn btn-export" onclick="exportCSV('students')">📥 Eksporto CSV</button>
+  </div>
+ 
+  <div class="panel">
+    <div class="panel-title"><span class="p-icon">👤</span> Regjistro Student të Ri</div>
+    <div class="form-grid">
+      <div class="ff"><label>Emri i Plotë *</label><input id="s-name" type="text" placeholder="p.sh. Arta Krasniqi"></div>
+      <div class="ff"><label>ID Studenti *</label><input id="s-id" type="text" placeholder="p.sh. STU-2024-001"></div>
+      <div class="ff"><label>Email</label><input id="s-email" type="email" placeholder="p.sh. arta@uni.edu"></div>
+      <div class="ff"><label>Fakulteti</label>
+        <select id="s-faculty">
+          <option value="">— Zgjidh —</option>
+          <option>Shkenca Kompjuterike</option><option>Inxhinieri</option>
+          <option>Mjekësi</option><option>Drejtësi</option><option>Ekonomi</option>
+          <option>Arte</option><option>Letërsi</option><option>Tjetër</option>
+        </select>
+      </div>
+      <div class="ff"><label>Viti i Studimeve</label>
+        <select id="s-year">
+          <option value="1">Viti 1</option><option value="2">Viti 2</option>
+          <option value="3">Viti 3</option><option value="4">Viti 4</option>
+          <option value="Master">Master</option>
+        </select>
+      </div>
+      <div class="ff"><label>Telefoni</label><input id="s-phone" type="text" placeholder="p.sh. +383 44 123 456"></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="addStudent()">+ Regjistro Student</button>
+  </div>
+ 
+  <div class="toolbar">
+    <div class="search-box"><span class="si">🔍</span><input id="s-search" type="text" placeholder="Kërko emër ose ID..." oninput="renderStudents()"></div>
+    <select class="fsel" id="s-faculty-filter" onchange="renderStudents()">
+      <option value="">Të gjitha fakultetet</option>
+      <option>Shkenca Kompjuterike</option><option>Inxhinieri</option>
+      <option>Mjekësi</option><option>Drejtësi</option><option>Ekonomi</option>
+      <option>Arte</option><option>Letërsi</option><option>Tjetër</option>
+    </select>
+  </div>
+ 
+  <div class="students-grid" id="students-grid"></div>
+  <div class="empty" id="students-empty"><div class="ei">👥</div><div class="et">Nuk ka studentë</div><p class="es">Regjistro studentin e parë.</p></div>
+</section>
+ 
+<!-- RENT -->
+<section id="rent">
+  <div class="sec-header" style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="sec-eyebrow">Huazimet</div>
+      <h2 class="sec-title">Rent / <em>Borrow</em></h2>
+    </div>
+    <button class="btn btn-export" onclick="exportCSV('rents')">📥 Eksporto CSV</button>
+  </div>
+ 
+  <div class="panel">
+    <div class="panel-title"><span class="p-icon">🤝</span> Krijo Huazim të Ri</div>
+    <div class="form-grid">
+      <div class="ff"><label>Studenti *</label><select id="r-student"><option value="">— Zgjidh —</option></select></div>
+      <div class="ff"><label>Libri *</label><select id="r-book"><option value="">— Zgjidh —</option></select></div>
+      <div class="ff"><label>Data e Huazimit</label><input id="r-date" type="date"></div>
+      <div class="ff"><label>Data e Kthimit</label><input id="r-return" type="date"></div>
+      <div class="ff full"><label>Çmimi dhe Informacioni</label>
+        <div class="price-preview" id="price-preview">Zgjidh studentin dhe librin për të parë çmimin</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="addRent()">+ Krijo Huazim</button>
+  </div>
+ 
+  <div class="rent-tabs">
+    <button class="rtab active" onclick="showRentTab('active',this)">🟢 Aktive</button>
+    <button class="rtab" onclick="showRentTab('returned',this)">✅ Kthyer</button>
+    <button class="rtab" onclick="showRentTab('all',this)">📋 Të Gjitha</button>
+  </div>
+ 
+  <div class="rents-grid" id="rents-grid"></div>
+  <div class="empty" id="rents-empty"><div class="ei">🤝</div><div class="et">Nuk ka huazime</div><p class="es">Krijo huazimin e parë.</p></div>
+</section>
+ 
+<!-- STATISTICS -->
+<section id="statistics">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Statistikat e Bibliotekës</div>
+    <h2 class="sec-title">Pasqyra <em>financiare</em></h2>
+  </div>
+  <div class="stats4">
+    <div class="scard accent-gold"><div class="scard-icon">💰</div><div class="scard-num" id="st-revenue">€0</div><div class="scard-lbl">Të Ardhura Totale</div></div>
+    <div class="scard accent-blue"><div class="scard-icon">🤝</div><div class="scard-num" id="st-rents">0</div><div class="scard-lbl">Huazime Gjithsej</div></div>
+    <div class="scard accent-green"><div class="scard-icon">📚</div><div class="scard-num" id="st-books">0</div><div class="scard-lbl">Kopje Disponibël</div></div>
+    <div class="scard accent-purple"><div class="scard-icon">⚠️</div><div class="scard-num" id="st-fines">€0</div><div class="scard-lbl">Gjoba Totale</div></div>
+  </div>
+  <div class="charts2">
+    <div class="cbox"><div class="cbox-title">📚 Librat më të Huazuar</div><div id="top-books-chart"></div></div>
+    <div class="cbox"><div class="cbox-title">🏫 Huazime sipas Fakultetit</div><div id="faculty-chart"></div></div>
+  </div>
+  <div class="cbox" style="margin-top:16px;">
+    <div class="cbox-title">💳 Historiku i Pagesave</div>
+    <div id="payment-history"></div>
+  </div>
+</section>
+ 
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Vlerësimet</div>
+    <h2 class="sec-title">Çfarë thonë <em>studentët</em></h2>
+  </div>
+  <div class="panel" style="margin-bottom:24px;">
+    <div class="panel-title"><span class="p-icon">✍️</span> Shto Vlerësim</div>
+    <div class="form-grid">
+      <div class="ff"><label>Studenti</label><select id="rv-student"><option value="">— Zgjidh —</option></select></div>
+      <div class="ff"><label>Libri</label><select id="rv-book"><option value="">— Zgjidh —</option></select></div>
+      <div class="ff"><label>Vlerësimi</label>
+        <div class="star-row" id="rv-stars">
+          <button class="sstar" data-v="1">★</button><button class="sstar" data-v="2">★</button>
+          <button class="sstar" data-v="3">★</button><button class="sstar" data-v="4">★</button>
+          <button class="sstar" data-v="5">★</button>
+        </div>
+      </div>
+      <div class="ff full"><label>Komenti</label><textarea id="rv-text" rows="3" placeholder="Çfarë mendoni për këtë libër?"></textarea></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="addReview()">+ Shto Vlerësim</button>
+  </div>
+  <div class="rev-grid" id="rev-grid"></div>
+</section>
+ 
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div>
+      <div class="sec-eyebrow">Rreth Sistemit</div>
+      <h2 class="about-title">Menaxhim i <em>plotë</em> i bibliotekës.</h2>
+      <p class="about-desc">Libraria Qendrore ofron sistem të integruar me ruajtje automatike, gjobë vonesë, eksport CSV dhe limite sigurie për huazime.</p>
+      <ul class="about-feats">
+        <li><span class="fdot"></span> Ruajtje automatike në LocalStorage — të dhënat nuk humbasin</li>
+        <li><span class="fdot"></span> Gjobë vonesë €0.50/ditë — llogaritet automatikisht</li>
+        <li><span class="fdot"></span> Maksimum 3 libra aktive për student</li>
+        <li><span class="fdot"></span> Konfirmim para çdo fshirjeje</li>
+        <li><span class="fdot"></span> Eksport CSV për libra, studentë dhe huazime</li>
+        <li><span class="fdot"></span> Çmim i reduktuar automatikisht për studentë</li>
+      </ul>
+    </div>
+    <div class="about-visual">
+      <div class="about-shelf">
+        <div class="shb sp1" style="width:50px;height:120px;font-size:20px;">L</div>
+        <div class="shb sp2" style="width:44px;height:95px;font-size:18px;">I</div>
+        <div class="shb sp3" style="width:54px;height:140px;font-size:20px;">B</div>
+        <div class="shb sp4" style="width:46px;height:108px;font-size:18px;">R</div>
+        <div class="shb sp5" style="width:50px;height:125px;font-size:20px;">A</div>
+        <div class="shb sp6" style="width:42px;height:90px;font-size:18px;">R</div>
+        <div class="shb sp1" style="width:48px;height:115px;font-size:20px;">I</div>
+      </div>
+      <div class="shelf-plank"></div>
+      <p class="about-quote">"Dija është fuqi, dhe biblioteka është burimi i saj."</p>
+      <p class="about-quote-by">— Francis Bacon</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- EDIT BOOK MODAL -->
+<div class="modal-overlay" id="edit-book-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Edito Librin</div>
+    <div class="form-grid">
+      <div class="ff"><label>Titulli</label><input id="eb-title" type="text"></div>
+      <div class="ff"><label>Autori</label><input id="eb-author" type="text"></div>
+      <div class="ff"><label>Zhanri</label>
+        <select id="eb-genre"><option value="">—</option>
+          <option>Matematikë</option><option>Fizikë</option><option>Kimi</option>
+          <option>Biologji</option><option>Histori</option><option>Letërsi</option>
+          <option>Filozofi</option><option>Ekonomi</option><option>Teknologji</option>
+          <option>Fiction</option><option>Tjetër</option>
+        </select>
+      </div>
+      <div class="ff"><label>Çmimi Normal (€)</label><input id="eb-price" type="number" min="0" step="0.5"></div>
+      <div class="ff"><label>Çmimi Student (€)</label><input id="eb-price-s" type="number" min="0" step="0.5"></div>
+      <div class="ff"><label>Kopje në Stok</label><input id="eb-stock" type="number" min="0"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mcancel" onclick="closeModal('edit-book-modal')">Anulo</button>
+      <button class="msave" onclick="saveBook()">Ruaj</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- STUDENT MODAL -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal modal-wide">
+    <div class="modal-title">👤 Profili i Studentit</div>
+    <div id="student-detail-content"></div>
+    <div class="modal-btns">
+      <button class="mcancel" onclick="closeModal('student-modal')">Mbyll</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- CONFIRM DIALOG -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+    <div class="modal-title" style="justify-content:center;" id="confirm-msg">Jeni i sigurt?</div>
+    <div class="modal-btns">
+      <button class="mcancel" id="confirm-no">Jo, Anulo</button>
+      <button class="msave" style="background:var(--red);" id="confirm-yes">Po, Konfirmo</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+ 
+<script src="js/script.js"></script>
 </body>
 </html>

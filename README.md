@@ -1,180 +1,176 @@
-# 📖 Biblioteka Personale e Librave
+# 📚 Libraria Qendrore
 
-Një aplikacion i thjeshtë në **C# (.NET)** që mundëson menaxhimin e librave personalë përmes një console interface.
-
----
-
-# 🚀 Përshkrimi
-
-**Biblioteka Personale e Librave** është një aplikacion që i lejon përdoruesit të:
-
-- Menaxhojnë koleksionin e librave
-- Kryejnë operacione bazike (CRUD)
-- Kërkojnë libra shpejt
-- Ruajnë të dhënat në file
-- Sigurojnë funksionim korrekt përmes **error handling** dhe **unit testing**
-
-Ky projekt demonstron përdorimin e arkitekturës së pastër dhe praktikave të mira si:
-- Repository Pattern  
-- Separation of Concerns  
-- Unit Testing  
+Sistem dixhital për menaxhimin e bibliotekave universitare — ndërtuar me HTML, CSS, JavaScript dhe C# (.NET 7).
 
 ---
 
-# ✨ Funksionalitetet
+## 🎯 Çfarë Zgjidh Ky Projekt
 
-## 📚 Funksione Kryesore
-- Shfaq të gjithë librat  
-- Shto libër të ri  
-- Gjej libër sipas ID  
-- Përditëso libër  
-- Fshi libër  
-- Kërko libra (sipas titullit ose autorit)  
+Bibliotekat universitare tradicionale menaxhojnë librat dhe huazimet me fletë letre ose Excel. Kjo shkakton:
 
-## 🛡 Menaxhimi i Gabimeve
-- Validim i inputeve (p.sh. ID jo valid)
-- Krijim automatik i file nëse mungon
-- Trajtim i exception-eve gjatë operacioneve  
+- Humbje të dhënash — nuk dihet kush ka cilin libër
+- Vonesë pa pasoja — studentët i kthejnë librat vonë pa gjobë
+- Zero statistika — administrata nuk di cilët libra huazohen më shumë
 
-## 💾 Ruajtja e të Dhënave
-- Librat ruhen në file `.csv`
-- Të dhënat lexohen dhe ruhen automatikisht  
-
-## 🧪 Testimi
-- Test për shtimin e librave  
-- Test për gjetjen sipas ID  
-- Test për fshirjen e librave  
+**Libraria Qendrore** zgjidh të gjitha këto me një sistem të integruar dixhital.
 
 ---
 
-# 🧱 Arkitektura
+## 👥 Përdoruesit
 
-Projekti është i organizuar në shtresa:
-
-- **Models** → Strukturat e të dhënave (Book)  
-- **Services** → Logjika e biznesit (BookService)  
-- **Data** → Qasja në të dhëna (Repository Pattern)  
-- **UI** → Ndërfaqja (Console - Program.cs)  
+| Përdoruesi | Roli |
+|---|---|
+| **Bibliotekari** | Shton libra, regjistron studentë, menaxhon huazimet |
+| **Studenti** | Huazon libra me çmim të reduktuar |
 
 ---
 
-# 🧩 Teknologjitë e Përdorura
+## ✅ Funksionalitetet Kryesore
 
-## 🔧 Backend
-- C# (.NET 7)
-- Console Application
-- File Handling (CSV)
-
-## 🧪 Testimi
-- xUnit
-
-## 🛠 Tools
-- Git  
-- GitHub  
-- VS Code  
+- 📚 **Katalog Librash** — shto, edito, fshi libra me çmim normal dhe student
+- 👤 **Regjistrim Studentësh** — ID unike, fakulteti, viti i studimeve
+- 🤝 **Sistem Huazimi** — çmim student automatik, limit 3 libra aktive
+- ⚠️ **Gjobë Vonesë** — €0.50 për çdo ditë vonesë, llogaritet automatikisht
+- 📊 **Statistika Live** — të ardhura, librat më të huazuar, sipas fakultetit
+- 📥 **Export CSV** — eksporto librat, studentët dhe huazimet
+- 💾 **LocalStorage** — të dhënat ruhen automatikisht në browser
+- ✍️ **Vlerësime** — studentët vlerësojnë librat me yje dhe komente
 
 ---
 
-# 📂 Struktura e Projektit
+## 🗂️ Struktura e Projektit
 
 ```
 personal-book-library/
 │
-├── docs/
-│   ├── architecture.md
-│   ├── class-diagram.md
-│   ├── class-diagram.png
-│   ├── implementation.md
-│   └── implementation-screenshot.png
-│
 ├── src/
-│   ├── backend/
-│   │   ├── Data/
-│   │   │   ├── FileRepository.cs
-│   │   │   ├── IRepository.cs
-│   │   │   └── books.csv
-│   │   │
-│   │   ├── Models/
-│   │   │   └── Book.cs
-│   │   │
-│   │   ├── Services/
-│   │   │   └── BookService.cs
-│   │   │
-│   │   ├── Program.cs
-│   │   └── PersonalBookLibrary.csproj
+│   ├── frontend/
+│   │   ├── index.html          ← Faqja kryesore
+│   │   ├── css/
+│   │   │   └── style.css       ← Stilimi
+│   │   └── js/
+│   │       └── script.js       ← Logjika e ndërfaqes
 │   │
-│   └── frontend/
-│       ├── index.html
-│       ├── css/
-│       │   └── style.css
-│       └── js/
-│           └── script.js
-│      
-├── PersonalBookLibrary.Tests/
-│   └── UnitTest1.cs
+│   └── backend/
+│       ├── Models/
+│       │   ├── Book.cs
+│       │   ├── Author.cs
+│       │   ├── Genre.cs
+│       │   └── BookResponse.cs
+│       ├── Services/
+│       │   ├── BookService.cs
+│       │   ├── IBookService.cs
+│       │   └── AuthorService.cs
+│       ├── Data/
+│       │   ├── IRepository.cs
+│       │   ├── FileRepository.cs
+│       │   ├── DatabaseRepository.cs
+│       │   ├── SeedData.cs
+│       │   └── books.csv
+│       ├── Program.cs
+│       └── PersonalBookLibrary.csproj
 │
-├── README.md
-└── .gitignore
+├── PersonalBookLibrary.Tests/
+│   └── UnitTest1.cs            ← 7 teste automatike
+│
+└── docs/
+    ├── demo-plan.md
+    ├── sprint-plan.md
+    ├── sprint-report.md
+    ├── project-audit.md
+    ├── improvement-report.md
+    └── architecture.md
 ```
 
 ---
 
-# ▶️ Si të Ekzekutohet
+## 🚀 Si të Hapësh Projektin
 
-## 🔹 Ekzekutimi i aplikacionit
+### Frontend (ndërfaqja vizuale)
+```
+1. Shko te: src/frontend/
+2. Hap index.html në browser (dyfish klikim)
+3. Gati — nuk nevojitet server!
+```
 
+### Backend (C# Console App)
 ```bash
 cd src/backend
 dotnet run
 ```
 
-## 🧪 Ekzekutimi i testeve
-
+### Testet
 ```bash
 cd PersonalBookLibrary.Tests
 dotnet test
 ```
 
----
-
-# 👤 User Stories
-
-- Si përdorues, dua të shtoj libra që të menaxhoj koleksionin tim  
-- Si përdorues, dua të kërkoj libra që t’i gjej më shpejt  
-- Si përdorues, dua të përditësoj librat  
-- Si përdorues, dua të fshij librat që nuk më duhen  
+**Rezultati i pritshëm:**
+```
+Passed! - Failed: 0, Passed: 7, Total: 7
+```
 
 ---
 
-# 📸 Screenshots
+## 🔄 Flow Kryesor i Aplikacionit
 
-*(Opsionale – mund të shtosh foto nga aplikacioni yt)*
+```
+Shto Libër → Regjistro Student → Krijo Huazim → Shiko Statistika → Kthe me Gjobë
+```
 
----
-
-# 📈 Përmirësime në të Ardhmen
-
-- Shtimi i kategorive/genre  
-- Statusi "i lexuar / jo i lexuar"  
-- Ndërtimi i një GUI (WinForms / Web App)  
-- Lidhja me databazë (SQL Server)  
-
----
-
-# 👩‍💻 Autori
-
-**Agnesa Hoti**  
-🎓 Projekt Universitar – 2026  
+**Hap pas hapi:**
+1. **Books** — shto libër me çmim normal €15 dhe çmim student €8
+2. **Students** — regjistro student me ID unike
+3. **Rent/Borrow** — sistemi tregon automatikisht çmimin e reduktuar
+4. **Statistics** — grafikët përditësohen live
+5. **Kthim** — sistemi llogarit gjobën €0.50/ditë nëse ka vonesë
 
 ---
 
-# ⭐ Shënime Finale
+## 🛠️ Teknologjitë
 
-Ky projekt demonstron:
+| Shtresa | Teknologjia |
+|---|---|
+| **Frontend** | HTML5, CSS3, JavaScript (Vanilla) |
+| **Backend** | C# / .NET 7 (Console App) |
+| **Ruajtja e të dhënave** | CSV (backend) + LocalStorage (frontend) |
+| **Testet** | xUnit (.NET) |
+| **Fontet** | Google Fonts — Cormorant Garamond + Outfit |
 
-✔ Strukturë të pastër të kodit  
-✔ Menaxhim të gabimeve  
-✔ Ruajtje të të dhënave në file  
-✔ Implementim të unit tests  
+---
 
-👉 Një bazë shumë e mirë për projekte më të avancuara 🚀
+## 🧪 Testet Automatike
+
+| Testi | Çfarë teston |
+|---|---|
+| `Add_ShouldAddBook` | Shton libër valid |
+| `GetById_ShouldReturnBook` | Gjen librin sipas ID |
+| `Delete_ShouldRemoveBook` | Fshin librin |
+| `Search_ExistingTerm_ReturnsBook` | Search gjen librin |
+| `Search_NonExistingTerm_ReturnsEmpty` | Search kthen bosh |
+| `Add_EmptyTitle_ThrowsException` | Validimi refuzon titull bosh |
+| `Add_DuplicateBook_ThrowsException` | Refuzon libër duplikat |
+
+---
+
+## 📋 Dokumentacioni
+
+| Dokumenti | Përshkrimi |
+|---|---|
+| `docs/demo-plan.md` | Plani i prezantimit live |
+| `docs/project-audit.md` | Auditimi i projektit — dobësitë dhe përmirësimet |
+| `docs/improvement-report.md` | Raporti i përmirësimeve të implementuara |
+| `docs/sprint-plan.md` | Plani i Sprint 2 |
+| `docs/sprint-report.md` | Raporti i Sprint 2 |
+
+---
+
+## ⚠️ Çfarë Mbetet për Përmirësim
+
+- **Integrimi Frontend ↔ Backend** — tani janë dy sisteme të pavarura. Hapi i radhës është ndërtimi i një ASP.NET Core Web API që i lidh të dyja
+- **Databazë reale** — zëvendësimi i CSV me SQLite ose SQL Server
+- **Autentikimi** — sistem login për bibliotekar dhe student
+
+---
+
+*Projekt akademik — ndërtuar me HTML/CSS/JS + C# .NET 7*

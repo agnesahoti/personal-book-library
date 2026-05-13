@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Chat</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">💬 Chat me Admin</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content" style="display:flex;flex-direction:column;height:calc(100vh - 130px);">
+    <!-- Admin info header -->
+    <div class="panel fade-in" style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:16px 20px;">
+      <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;">A</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;">Administratori</div>
+        <div style="font-size:12px;color:var(--green);display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;"></span> Online</div>
+      </div>
+      <div style="margin-left:auto;font-size:13px;color:var(--muted);">Bibliotekar — Ndihmë & Informacion</div>
+    </div>
+ 
+    <!-- Chat messages -->
+    <div class="panel fade-in" style="flex:1;padding:0;overflow:hidden;display:flex;flex-direction:column;">
+      <div class="chat-wrap" id="chat-messages" style="flex:1;border:none;border-radius:0;margin:0;"></div>
+      <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;">
+        <input type="text" id="msg-input" placeholder="Shkruaj mesazhin tënd..." style="flex:1;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'" onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="btn btn-gold" onclick="sendMsg()">Dërgo →</button>
+      </div>
+    </div>
+ 
+    <!-- Quick questions -->
+    <div style="margin-top:14px;">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Pyetje të Shpejta</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="quickMsg('Sa kushton huazimi i librit?')">💰 Sa kushton?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickMsg('Si mund ta zgjat afatin e kthimit?')">⏰ Zgjatja e afatit</button>
+        <button class="btn btn-outline btn-sm" onclick="quickMsg('Kur mund të vij ta kthej librin?')">📅 Oraret e kthimit</button>
+        <button class="btn btn-outline btn-sm" onclick="quickMsg('A mund të huazoj libra nga fusha e Teknologjisë?')">📚 Libra teknologjie</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('chat.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+let state=loadAll();
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+function renderChat(){
+  state=loadAll();
+  const msgs=sr?state.messages.filter(m=>m.studentId===sr.id):[];
+  msgs.forEach(m=>{if(m.from==='admin')m.readByStudent=true;});
+  if(sr)saveAll(state);
+  const chatEl=document.getElementById('chat-messages');
+  if(!msgs.length){
+    chatEl.innerHTML=`<div style="text-align:center;padding:40px 20px;">
+      <div style="font-size:48px;margin-bottom:12px;">💬</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px;">Fillo bisedën!</div>
+      <div style="font-size:13px;color:var(--muted);">Administratori është gati të të ndihmojë.</div>
+    </div>`;
+    return;
+  }
+  chatEl.innerHTML=msgs.map(m=>{
+    const isMe=m.from==='student';
+    return`<div class="chat-msg ${isMe?'me':''}">
+      <div class="chat-avatar" style="background:${isMe?'linear-gradient(135deg,var(--blue),#3b82f6)':'linear-gradient(135deg,var(--gold),var(--gold-l))'};">${isMe?user.name.charAt(0):'A'}</div>
+      <div><div class="chat-bubble">${m.text}</div><div class="chat-time">${m.time}</div></div>
+    </div>`;
+  }).join('');
+  chatEl.scrollTop=chatEl.scrollHeight;
+}
+ 
+function sendMsg(){
+  const text=document.getElementById('msg-input').value.trim();
+  if(!text)return;
+  if(!sr){toast('⚠️ Llogaria nuk është e lidhur!','error');return;}
+  state=loadAll();
+  state.messages.push({id:state.nextMsgId++,studentId:sr.id,studentName:sr.name,from:'student',text,time:new Date().toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}),readByAdmin:false,readByStudent:true});
+  saveAll(state);
+  document.getElementById('msg-input').value='';
+  renderChat();
+ 
+  // Auto-reply from admin after 1.5s
+  setTimeout(()=>{
+    state=loadAll();
+    const replies=[
+      'Faleminderit për mesazhin! Do të ju ndihmojmë sa më shpejt.',
+      'Mirë se vini! Si mund t\'ju ndihmojmë sot?',
+      'Mesazhi juaj u mor. Një bibliotekare do të ju kontaktojë së shpejti.',
+      'Pyetja juaj është shënuar. Kthejuni brenda pak minutash!',
+    ];
+    const reply=replies[Math.floor(Math.random()*replies.length)];
+    state.messages.push({id:state.nextMsgId++,studentId:sr.id,studentName:sr.name,from:'admin',text:reply,time:new Date().toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}),readByAdmin:true,readByStudent:false});
+    saveAll(state);renderChat();
+  },1500);
+}
+ 
+function quickMsg(text){
+  document.getElementById('msg-input').value=text;
+  document.getElementById('msg-input').focus();
+}
+ 
+renderChat();
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Profili Im</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">👤 Profili Im</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <div style="display:grid;grid-template-columns:320px 1fr;gap:20px;">
+      <!-- Profile Card -->
+      <div>
+        <div class="profile-card fade-in">
+          <div class="profile-cover">
+            <img class="profile-cover-img" src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&fit=crop" onerror="this.style.display='none'">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="p-avatar">S</div>
+            </div>
+          </div>
+          <div class="profile-body">
+            <div class="profile-name" id="p-name">—</div>
+            <div class="profile-role" id="p-role">—</div>
+            <div class="profile-stats">
+              <div><div class="pstat-num" id="p-total">0</div><div class="pstat-lbl">Huazime</div></div>
+              <div><div class="pstat-num" id="p-active">0</div><div class="pstat-lbl">Aktive</div></div>
+              <div><div class="pstat-num" id="p-spent">€0</div><div class="pstat-lbl">Paguar</div></div>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="panel fade-in" style="margin-top:16px;">
+          <div class="panel-title"><span class="p-icon">📋</span> Informacionet</div>
+          <div id="info-grid"></div>
+        </div>
+      </div>
+ 
+      <!-- Activity -->
+      <div>
+        <div class="panel fade-in">
+          <div class="panel-title"><span class="p-icon">📊</span> Aktiviteti Im</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+            <div style="background:var(--gold-bg);border:1.5px solid var(--gold);border-radius:10px;padding:16px;">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">Libra Aktive</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--gold);" id="act-active">0</div>
+              <div style="font-size:12px;color:var(--muted);">nga 3 maksimumi</div>
+            </div>
+            <div style="background:var(--green-bg);border:1.5px solid var(--green);border-radius:10px;padding:16px;">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">Libra Kthyer</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--green);" id="act-returned">0</div>
+              <div style="font-size:12px;color:var(--muted);">me sukses</div>
+            </div>
+          </div>
+ 
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">📖 Librat Aktive</div>
+          <div id="active-books"></div>
+        </div>
+ 
+        <div class="panel fade-in">
+          <div class="panel-title"><span class="p-icon">🕐</span> Historiku i Fundit</div>
+          <div id="history"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('profile.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+document.getElementById('p-avatar').textContent=user.name.charAt(0);
+const state=loadAll();
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+if(sr){
+  document.getElementById('p-name').textContent=sr.name;
+  document.getElementById('p-role').textContent=(sr.faculty||'—')+' · Viti '+(sr.year||'—');
+  const myR=state.rents.filter(r=>r.studentId===sr.id);
+  const active=myR.filter(r=>r.status==='active');
+  const returned=myR.filter(r=>r.status==='returned');
+  const spent=myR.reduce((s,r)=>s+r.price,0);
+  document.getElementById('p-total').textContent=myR.length;
+  document.getElementById('p-active').textContent=active.length;
+  document.getElementById('p-spent').textContent='€'+spent.toFixed(2);
+  document.getElementById('act-active').textContent=active.length;
+  document.getElementById('act-returned').textContent=returned.length;
+ 
+  document.getElementById('info-grid').innerHTML=[
+    ['👤 ID Studenti',sr.studentId],
+    ['📧 Email',sr.email||'—'],
+    ['📞 Telefoni',sr.phone||'—'],
+    ['🏫 Fakulteti',sr.faculty||'—'],
+    ['📅 Regjistruar',sr.joined||'—'],
+  ].map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="color:var(--muted);">${l}</span><span style="font-weight:600;">${v}</span></div>`).join('');
+ 
+  document.getElementById('active-books').innerHTML=active.length?active.map(r=>{
+    const b=state.books.find(x=>x.id===r.bookId);
+    const fine=calcFine(r),days=Math.ceil((new Date(r.dateReturn)-new Date())/86400000);
+    return`<div style="display:flex;gap:12px;align-items:center;padding:12px;background:var(--bg);border-radius:10px;margin-bottom:8px;">
+      <div style="width:36px;height:48px;border-radius:4px;background:${b?getBookGradient(b):'var(--border)'};flex-shrink:0;"></div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${b?b.title:'I fshirë'}</div>
+      <div style="font-size:12px;color:var(--muted);">Kthim: ${r.dateReturn}</div>
+      ${fine>0?`<span class="badge badge-red" style="margin-top:4px;">⚠️ Gjobë: €${fine.toFixed(2)}</span>`:days>=0?`<span style="font-size:12px;color:var(--blue);">Mbeten ${days} ditë</span>`:''}
+      </div>
+      <strong style="color:var(--green);">€${r.price.toFixed(2)}</strong>
+    </div>`;
+  }).join(''):'<p style="color:var(--muted);font-size:13px;">Nuk ke libra aktive. <a href="browse.html" style="color:var(--gold);">Huazo tani →</a></p>';
+ 
+  document.getElementById('history').innerHTML=[...myR].reverse().slice(0,6).map(r=>{
+    const b=state.books.find(x=>x.id===r.bookId);
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:13px;font-weight:600;">${b?b.title:'I fshirë'}</div><div style="font-size:11px;color:var(--muted);">${r.dateRented} → ${r.dateReturn}</div></div>
+      <div style="text-align:right;"><div style="font-weight:700;color:var(--green);">€${r.price.toFixed(2)}</div><span class="badge ${r.status==='returned'?'badge-gray':'badge-green'}" style="margin-top:4px;">${r.status==='returned'?'✅ Kthyer':'🟢 Aktiv'}</span></div>
+    </div>`;
+  }).join('')||'<p style="color:var(--muted);font-size:13px;">Nuk ka histori.</p>';
+}
+</script>
+</body>
+</html>
+ 

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#b8860b; --gold-l:#d4a017; --gold-bg:#fdf8ee;
+  --text:#1a1410; --muted:#8a8070; --border:#e8e2d8;
+  --surface:#ffffff; --bg:#f7f4ef;
+  --blue:#1d4ed8; --green:#15803d;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Outfit',sans-serif;
+  min-height:100vh; display:flex;
+  background:#1a1410;
+  overflow:hidden;
+}
+ 
+/* LEFT — cover image */
+.cover {
+  flex:1;
+  background:linear-gradient(135deg, #1a1410 0%, #2d2318 50%, #1a1410 100%);
+  display:flex; flex-direction:column;
+  justify-content:flex-end; padding:60px;
+  position:relative; overflow:hidden;
+}
+.cover-pattern {
+  position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(184,134,11,0.04) 0px, rgba(184,134,11,0.04) 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(-45deg, rgba(184,134,11,0.04) 0px, rgba(184,134,11,0.04) 1px, transparent 1px, transparent 60px);
+}
+.cover-books {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  display:flex; align-items:flex-end; gap:12px;
+  opacity:.15;
+}
+.cb {
+  border-radius:4px 8px 8px 4px;
+  position:relative; overflow:hidden;
+}
+.cb::before { content:''; position:absolute; left:0; top:0; bottom:0; width:6px; background:rgba(0,0,0,0.3); }
+.cover-text { position:relative; z-index:1; }
+.cover-eyebrow {
+  font-size:11px; font-weight:600; letter-spacing:3px;
+  text-transform:uppercase; color:var(--gold);
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.cover-eyebrow::before { content:''; width:24px; height:1px; background:var(--gold); }
+.cover-h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,5vw,72px); font-weight:700;
+  line-height:1.05; letter-spacing:-2px;
+  color:#fff; margin-bottom:16px;
+}
+.cover-h1 em { font-style:italic; color:var(--gold); }
+.cover-sub { font-size:15px; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.7; max-width:380px; }
+ 
+/* RIGHT — login form */
+.login-side {
+  width:440px; flex-shrink:0;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  justify-content:center; padding:60px 48px;
+}
+.login-logo {
+  width:48px; height:48px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; margin-bottom:32px;
+  box-shadow:0 4px 16px rgba(184,134,11,0.3);
+}
+.login-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px; font-weight:700; color:var(--text);
+  margin-bottom:6px; letter-spacing:-1px;
+}
+.login-sub { font-size:14px; color:var(--muted); margin-bottom:36px; }
+ 
+.form-field { margin-bottom:16px; }
+.form-field label {
+  display:block; font-size:11px; font-weight:600;
+  letter-spacing:1.2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:6px;
+}
+.form-field input {
+  width:100%; padding:13px 16px;
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; color:var(--text);
+  font-family:'Outfit',sans-serif; font-size:15px; outline:none;
+  transition:all .2s;
+}
+.form-field input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,134,11,0.1); }
+ 
+.btn-login {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  color:#fff; border:none; border-radius:10px;
+  font-family:'Outfit',sans-serif; font-size:15px; font-weight:600;
+  cursor:pointer; transition:all .25s; margin-top:8px;
+  box-shadow:0 4px 16px rgba(184,134,11,0.3);
+}
+.btn-login:hover { transform:translateY(-1px); box-shadow:0 6px 22px rgba(184,134,11,0.4); }
+.btn-login:active { transform:scale(0.99); }
+ 
+.error-msg {
+  background:#fef2f2; border:1px solid #fca5a5;
+  color:#dc2626; padding:11px 14px; border-radius:8px;
+  font-size:13px; margin-top:12px; display:none;
+}
+.error-msg.show { display:block; }
+ 
+/* Demo credentials */
+.demo-creds {
+  margin-top:36px; padding-top:24px;
+  border-top:1px solid var(--border);
+}
+.demo-title { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+.demo-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px; border-radius:9px; border:1.5px solid var(--border);
+  background:var(--surface); margin-bottom:8px; cursor:pointer;
+  transition:all .2s;
+}
+.demo-row:hover { border-color:var(--gold); background:var(--gold-bg); }
+.demo-row-left { display:flex; align-items:center; gap:10px; }
+.demo-avatar {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff;
+}
+.da-admin   { background:linear-gradient(135deg,var(--gold),var(--gold-l)); }
+.da-student { background:linear-gradient(135deg,var(--blue),#3b82f6); }
+.demo-name  { font-size:13px; font-weight:600; color:var(--text); }
+.demo-pass  { font-size:11px; color:var(--muted); }
+.demo-use   { font-size:11px; font-weight:600; color:var(--gold); }
+</style>
+</head>
+<body>
+ 
+<!-- LEFT COVER -->
+<div class="cover">
+  <div class="cover-pattern"></div>
+  <div class="cover-books">
+    <div class="cb" style="width:60px;height:140px;background:linear-gradient(135deg,#7b3a2a,#b05230);"></div>
+    <div class="cb" style="width:50px;height:110px;background:linear-gradient(135deg,#2a4a7b,#3a6bb0);"></div>
+    <div class="cb" style="width:65px;height:160px;background:linear-gradient(135deg,#3a5e3a,#5a8e5a);"></div>
+    <div class="cb" style="width:55px;height:130px;background:linear-gradient(135deg,#5e4a2a,#8e6a3a);"></div>
+    <div class="cb" style="width:58px;height:150px;background:linear-gradient(135deg,#4a2a5e,#6a3a8e);"></div>
+    <div class="cb" style="width:48px;height:105px;background:linear-gradient(135deg,#2a5e5e,#3a8e8e);"></div>
+  </div>
+  <div class="cover-text">
+    <div class="cover-eyebrow">Sistem Dixhital</div>
+    <h1 class="cover-h1">Bibloteka <em>ku </em><br>dijet<br>jetojne.</h1>
+    <p class="cover-sub">Sistem i plotë për menaxhimin e bibliotekës universitare — libra, studentë, huazime dhe statistika.</p>
+  </div>
+</div>
+ 
+<!-- RIGHT LOGIN -->
+<div class="login-side">
+  <div class="login-logo">📚</div>
+  <h1 class="login-title">Mirë se vini</h1>
+  <p class="login-sub">Hyni me kredencialet tuaja</p>
+ 
+  <div class="form-field">
+    <label>Përdoruesi</label>
+    <input type="text" id="username" placeholder="admin ose student" autocomplete="username">
+  </div>
+  <div class="form-field">
+    <label>Fjalëkalimi</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+ 
+  <button class="btn-login" onclick="doLogin()">Hyr në Sistem →</button>
+  <div class="error-msg" id="error-msg">⚠️ Përdoruesi ose fjalëkalimi është i gabuar.</div>
+ 
+  <!-- Demo credentials -->
+  <div class="demo-creds">
+    <div class="demo-title">Kredencialet Demo</div>
+    <div class="demo-row" onclick="fillCreds('admin','admin123')">
+      <div class="demo-row-left">
+        <div class="demo-avatar da-admin">A</div>
+        <div>
+          <div class="demo-name">Administrator</div>
+          <div class="demo-pass">admin / admin123</div>
+        </div>
+      </div>
+      <span class="demo-use">Përdor →</span>
+    </div>
+    <div class="demo-row" onclick="fillCreds('student','student123')">
+      <div class="demo-row-left">
+        <div class="demo-avatar da-student">S</div>
+        <div>
+          <div class="demo-name">Student</div>
+          <div class="demo-pass">student / student123</div>
+        </div>
+      </div>
+      <span class="demo-use">Përdor →</span>
+    </div>
+  </div>
+</div>
+ 
+<script src="js/data.js"></script>
+<script>
+function fillCreds(u, p) {
+  document.getElementById('username').value = u;
+  document.getElementById('password').value = p;
+  document.getElementById('username').focus();
+}
+ 
+function doLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  const user = login(u, p);
+  if (user) {
+    if (user.role === 'admin')   window.location.href = 'admin/dashboard.html';
+    else                         window.location.href = 'student/browse.html';
+  } else {
+    document.getElementById('error-msg').classList.add('show');
+  }
+}
+ 
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+ 
+// Auto-redirect if already logged in
+const u = getUser();
+if (u) {
+  if (u.role === 'admin') window.location.href = 'admin/dashboard.html';
+  else window.location.href = 'student/browse.html';
+}
+</script>
+</body>
+</html>

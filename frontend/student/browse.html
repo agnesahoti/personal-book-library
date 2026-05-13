@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Shfleto Librat</title>
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.hero-student{background:linear-gradient(135deg,#0f0d0a 0%,#1e1408 100%);padding:36px 32px;position:relative;overflow:hidden;}
+.hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.15;}
+.hero-content{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:32px;}
+.hero-text .eyebrow{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4a017;margin-bottom:10px;}
+.hero-text h1{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:#fff;line-height:1.1;letter-spacing:-1px;}
+.hero-text h1 em{font-style:italic;color:#d4a017;}
+.hero-text p{font-size:14px;color:rgba(255,255,255,0.45);margin-top:8px;max-width:340px;}
+.hero-stats{display:flex;gap:20px;}
+.hs{text-align:center;}
+.hs-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#d4a017;}
+.hs-lbl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+.hero-cards{display:flex;flex-direction:column;gap:8px;}
+.hc{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;min-width:160px;}
+.hc-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.hc-val{font-size:13px;font-weight:600;color:#fff;}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <!-- HERO -->
+  <div class="hero-student">
+    <img class="hero-bg-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&fit=crop" alt="" onerror="this.style.display='none'">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="eyebrow">Biblioteka Qendrore</div>
+        <h1>Gjej librin<br>tënd <em>sot</em>.</h1>
+        <p>Si student ke çmime të reduktuara deri në 50% për të gjithë librat.</p>
+        <div class="hero-stats" style="margin-top:20px;">
+          <div class="hs"><div class="hs-num" id="h-total">0</div><div class="hs-lbl">Libra</div></div>
+          <div class="hs"><div class="hs-num" id="h-avail">0</div><div class="hs-lbl">Disponibël</div></div>
+          <div class="hs"><div class="hs-num" id="h-mine">0</div><div class="hs-lbl">Të Miat</div></div>
+        </div>
+      </div>
+      <div class="hero-cards">
+        <div class="hc"><div class="hc-lbl">Studenti</div><div class="hc-val" id="hc-name">—</div></div>
+        <div class="hc"><div class="hc-lbl">Zbritje Studentore</div><div class="hc-val" style="color:#d4a017;">deri në 50% 🎉</div></div>
+        <div class="hc"><div class="hc-lbl">Libra Aktive</div><div class="hc-val"><span id="hc-active">0</span> / 3 max</div></div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="content">
+    <div class="toolbar" style="margin-top:0;">
+      <div class="search-box"><span class="si">🔍</span><input id="b-search" type="text" placeholder="Kërko titull ose autor..." oninput="renderBooks()"></div>
+      <select class="fsel" id="b-genre" onchange="renderBooks()"><option value="">Të gjitha lëndët</option><option>Matematikë</option><option>Fizikë</option><option>Kimi</option><option>Biologji</option><option>Histori</option><option>Letërsi</option><option>Filozofi</option><option>Ekonomi</option><option>Teknologji</option><option>Fiction</option><option>Tjetër</option></select>
+      <select class="fsel" id="b-avail" onchange="renderBooks()"><option value="">Të gjithë</option><option value="yes">✅ Vetëm disponibël</option></select>
+      <select class="fsel" id="b-sort" onchange="renderBooks()"><option value="">Default</option><option value="az">A → Z</option><option value="price-asc">Çmimi ↑</option></select>
+    </div>
+    <div class="books-grid-cards" id="book-grid"></div>
+    <div class="empty" id="b-empty"><div class="empty-icon">📖</div><div class="empty-title">Nuk ka libra</div><p class="empty-sub">Provo kërkim tjetër.</p></div>
+  </div>
+</div>
+</div>
+ 
+<!-- BOOK DETAIL MODAL -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal" style="width:540px;">
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="mcancel" onclick="closeModal('book-modal')">Mbyll</button>
+      <button class="msave" id="rent-btn" onclick="doRent()">📨 Dërgo Kërkesë</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('browse.html');
+const user=getUser();
+let state=loadAll();
+let selBookId=null;
+ 
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+document.getElementById('hc-name').textContent=user.name;
+document.getElementById('s-av').textContent=user.name.charAt(0);
+ 
+function getMyRents(){return sr?state.rents.filter(r=>r.studentId===sr.id&&r.status==='active'):[];}
+ 
+function updateHero(){
+  document.getElementById('h-total').textContent=state.books.length;
+  document.getElementById('h-avail').textContent=state.books.filter(b=>b.stock>0).length;
+  document.getElementById('h-mine').textContent=sr?state.rents.filter(r=>r.studentId===sr.id).length:0;
+  document.getElementById('hc-active').textContent=getMyRents().length;
+}
+ 
+function openBook(id){
+  selBookId=id;
+  state=loadAll();
+  const b=state.books.find(x=>x.id===id);
+  const cover=b.customCover||BOOK_COVERS[b.coverIdx%BOOK_COVERS.length];
+  const disc=Math.round((1-b.priceStudent/b.price)*100);
+  const revs=state.reviews.filter(r=>r.bookId===id||r.bookTitle===b.title);
+  const avgR=revs.length?(revs.reduce((s,r)=>s+r.rating,0)/revs.length).toFixed(1):null;
+  const myR=getMyRents();
+  const canRent=b.stock>0&&myR.length<MAX_RENTS&&sr;
+  document.getElementById('modal-body').innerHTML=`
+    <div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:20px;position:relative;">
+      <img src="${cover}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5),transparent);"></div>
+      <div style="position:absolute;bottom:16px;left:16px;font-size:13px;font-weight:600;color:#fff;">${b.genre?`<span style="background:rgba(184,134,11,0.8);padding:3px 10px;border-radius:20px;">${b.genre}</span>`:''}</div>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:4px;">${b.title}</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;">${b.author}</div>
+    ${b.description?`<div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;">${b.description}</div>`:''}
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <s style="font-size:14px;color:var(--muted);">€${b.price.toFixed(2)}</s>
+      <span style="font-size:24px;font-weight:700;color:var(--green);">€${b.priceStudent.toFixed(2)}</span>
+      <span class="badge badge-green">-${disc}% student</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+      <div style="background:var(--bg);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">Stoku</div>
+        <div style="font-size:18px;font-weight:700;color:${b.stock>0?'var(--green)':'var(--red)'};">${b.stock>0?b.stock+' kopje':'Pa stok'}</div>
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">Vlerësimi</div>
+        <div style="font-size:18px;font-weight:700;color:var(--gold);">${avgR?'★ '+avgR:'—'}</div>
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">Vlerësime</div>
+        <div style="font-size:18px;font-weight:700;color:var(--blue);">${revs.length}</div>
+      </div>
+    </div>
+    ${!canRent?`<div style="background:var(--red-bg);border:1px solid #fca5a5;color:var(--red);padding:12px;border-radius:8px;font-size:13px;font-weight:500;">${!sr?'⚠️ Llogaria jote nuk është e lidhur me asnjë student.':b.stock<=0?'⚠️ Nuk ka kopje në stok.':'⚠️ Ke arritur limitin e 3 librave aktive.'}</div>`:''}
+    ${revs.length?`<div style="margin-top:14px;"><div style="font-size:13px;font-weight:700;margin-bottom:10px;">Vlerësimet</div>${revs.slice(0,3).map(r=>`<div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px;"><div style="font-size:12px;font-weight:600;color:var(--blue);">👤 ${r.studentName}</div><div style="font-size:13px;font-style:italic;color:var(--text2);margin-top:4px;">"${r.text}"</div></div>`).join('')}</div>`:''}`;
+  const btn=document.getElementById('rent-btn');
+  btn.disabled=!canRent;btn.style.opacity=canRent?1:0.4;
+  openModal('book-modal');
+}
+ 
+function doRent(){
+  if(!selBookId||!sr)return;
+  state=loadAll();
+  const b=state.books.find(x=>x.id===selBookId);
+  if(b.stock<=0){toast('⚠️ Pa stok!','error');return;}
+  if(getMyRents().length>=MAX_RENTS){toast('⚠️ Limit i arritur (max 3 libra)!','error');return;}
+  if(!state.requests) state.requests=[];
+  const existing=state.requests.find(r=>r.studentId===sr.id&&r.bookId===selBookId&&r.status==='pending');
+  if(existing){toast('⚠️ Ke tashmë një kërkesë aktive për këtë libër!','error');return;}
+  state.requests.push({
+    id: state.nextReqId || 1,
+    studentId:sr.id, studentName:sr.name, studentFaculty:sr.faculty,
+    bookId:selBookId, bookTitle:b.title, bookAuthor:b.author,
+    priceStudent:b.priceStudent, pages: b.pages || null,
+    requestDate:todayStr(), status:'pending'
+  });
+  state.nextReqId = (state.nextReqId || 1) + 1;
+  saveAll(state);closeModal('book-modal');updateHero();renderBooks();
+  toast(`📨 Kërkesa për "${b.title}" u dërgua! Prit aprovimin.`,'success');
+}
+ 
+function addToWishlist(id){
+  state=loadAll();
+  if(!sr){toast('⚠️ Llogaria nuk është e lidhur!','error');return;}
+  if(state.wishlist.find(w=>w.studentId===sr.id&&w.bookId===id)){toast('⚠️ Është tashmë në wishlist!');return;}
+  const b=state.books.find(x=>x.id===id);
+  state.wishlist.push({id:Date.now(),studentId:sr.id,bookId:id,bookTitle:b.title,bookAuthor:b.author,addedDate:todayStr()});
+  saveAll(state);toast(`❤️ "${b.title}" u shtua te wishlist!`,'success');
+}
+ 
+function renderBooks(){
+  state=loadAll();
+  const q=document.getElementById('b-search').value.toLowerCase();
+  const genre=document.getElementById('b-genre').value;
+  const avail=document.getElementById('b-avail').value;
+  const sort=document.getElementById('b-sort').value;
+  let list=state.books.filter(b=>{
+    const mq=!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q);
+    const mg=!genre||b.genre===genre;
+    const ma=avail!=='yes'||b.stock>0;
+    return mq&&mg&&ma;
+  });
+  if(sort==='az')list.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(sort==='price-asc')list.sort((a,b)=>a.priceStudent-b.priceStudent);
+  const grid=document.getElementById('book-grid'),empty=document.getElementById('b-empty');
+  if(!list.length){grid.innerHTML='';empty.classList.add('show');return;}
+  empty.classList.remove('show');
+  const revMap={};state.reviews.forEach(r=>{if(!revMap[r.bookId])revMap[r.bookId]=[];revMap[r.bookId].push(r.rating);});
+  grid.innerHTML=list.map((b,i)=>{
+    const cover=b.customCover||BOOK_COVERS[b.coverIdx%BOOK_COVERS.length];
+    const disc=Math.round((1-b.priceStudent/b.price)*100);
+    const revs=revMap[b.id]||[];
+    const avg=revs.length?(revs.reduce((s,r)=>s+r,0)/revs.length).toFixed(1):null;
+    return`<div class="book-card-visual fade-in" style="animation-delay:${i*.04}s;">
+      <div class="book-cover" style="cursor:pointer;" onclick="openBook(${b.id})">
+        <img src="${cover}" alt="${b.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="display:none;width:100%;height:100%;background:${getBookGradient(b)};align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:rgba(255,255,255,0.8);">${b.title.charAt(0)}</div>
+        <div class="book-cover-overlay"></div>
+        <div style="position:absolute;top:10px;right:10px;display:flex;gap:4px;">
+          ${b.genre?`<span class="badge badge-gold" style="font-size:9px;">${b.genre}</span>`:''}
+          ${b.stock===0?`<span class="badge badge-red" style="font-size:9px;">Pa stok</span>`:''}
+        </div>
+      </div>
+      <div class="book-card-body">
+        <div class="book-card-title" onclick="openBook(${b.id})" style="cursor:pointer;">${b.title}</div>
+        <div class="book-card-author">${b.author}</div>
+        <div class="book-price-row">
+          <span class="price-old">€${b.price.toFixed(2)}</span>
+          <span class="price-new">€${b.priceStudent.toFixed(2)}</span>
+          <span class="price-disc">-${disc}%</span>
+        </div>
+        ${avg?`<div style="font-size:12px;color:#f59e0b;margin-bottom:8px;">★ ${avg} (${revs.length})</div>`:''}
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-gold btn-sm" style="flex:1;justify-content:center;" onclick="openBook(${b.id})">${b.stock>0?'📨 Kërko':'👁️ Shiko'}</button>
+          <button class="btn btn-outline btn-sm" onclick="addToWishlist(${b.id})" title="Shto te wishlist">❤️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  updateHero();
+}
+ 
+renderBooks();
+</script>
+</body>
+</html>

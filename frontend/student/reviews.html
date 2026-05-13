@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Vlerësimet e Mia</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">⭐ Vlerësimet e Mia</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <!-- Add review form -->
+    <div class="panel fade-in">
+      <div class="panel-title"><span class="p-icon">✍️</span> Shto Vlerësim të Ri</div>
+      <div class="form-grid">
+        <div class="ff"><label>Libri *</label><select id="rv-book"><option value="">— Zgjidh librin —</option></select></div>
+        <div class="ff"><label>Vlerësimi *</label>
+          <div class="star-row" id="rv-stars">
+            <button class="sstar" data-v="1">★</button><button class="sstar" data-v="2">★</button>
+            <button class="sstar" data-v="3">★</button><button class="sstar" data-v="4">★</button>
+            <button class="sstar" data-v="5">★</button>
+          </div>
+        </div>
+        <div class="ff full"><label>Komenti *</label><textarea id="rv-text" rows="3" placeholder="Çfarë mendoni për këtë libër? Ndajeni mendimin tuaj..."></textarea></div>
+      </div>
+      <button class="btn btn-gold" style="margin-top:14px;width:100%;" onclick="addReview()">+ Publiko Vlerësimin</button>
+    </div>
+ 
+    <!-- My reviews -->
+    <div class="panel-title" style="margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;">Vlerësimet e Mia</div>
+    <div id="my-reviews" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;"></div>
+    <div class="empty" id="rv-empty">
+      <div class="empty-icon">⭐</div>
+      <div class="empty-title">Nuk ke vlerësime ende</div>
+      <p class="empty-sub">Huazo një libër dhe ndaj mendimin tënd!</p>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('reviews.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+let state=loadAll(),rvRating=0;
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+// Stars
+document.getElementById('rv-stars').querySelectorAll('.sstar').forEach(b=>{
+  b.addEventListener('click',()=>{
+    rvRating=+b.dataset.v;
+    document.getElementById('rv-stars').querySelectorAll('.sstar').forEach(s=>s.classList.toggle('on',+s.dataset.v<=rvRating));
+  });
+});
+ 
+function populate(){
+  // Only show books the student has rented
+  const myBooks=sr?[...new Set(state.rents.filter(r=>r.studentId===sr.id).map(r=>r.bookId))]:[];
+  document.getElementById('rv-book').innerHTML='<option value="">— Zgjidh librin —</option>'+
+    myBooks.map(bid=>{const b=state.books.find(x=>x.id===bid);return b?`<option value="${b.id}">${b.title}</option>`:''}).join('');
+}
+ 
+function addReview(){
+  const bid=+document.getElementById('rv-book').value;
+  const text=document.getElementById('rv-text').value.trim();
+  if(!bid){toast('⚠️ Zgjidh librin!','error');return;}
+  if(!text){toast('⚠️ Shkruaj koment!','error');return;}
+  if(rvRating===0){toast('⚠️ Zgjidh vlerësimin me yje!','error');return;}
+  const b=state.books.find(x=>x.id===bid);
+  state.reviews.push({id:state.nextRevId++,studentId:sr?.id,studentName:user.name,bookId:bid,bookTitle:b.title,rating:rvRating,text,date:new Date().toLocaleDateString('sq-AL')});
+  saveAll(state);
+  document.getElementById('rv-text').value='';
+  rvRating=0;
+  document.getElementById('rv-stars').querySelectorAll('.sstar').forEach(s=>s.classList.remove('on'));
+  renderMyReviews();
+  toast('⭐ Vlerësimi u publikua!','success');
+}
+ 
+function deleteReview(id){
+  if(!confirm('Fshi vlerësimin?'))return;
+  state.reviews=state.reviews.filter(x=>x.id!==id);
+  saveAll(state);renderMyReviews();toast('🗑️ U fshi.');
+}
+ 
+function renderMyReviews(){
+  state=loadAll();
+  const myR=state.reviews.filter(r=>r.studentName===user.name||(sr&&r.studentId===sr.id));
+  const grid=document.getElementById('my-reviews'),empty=document.getElementById('rv-empty');
+  if(!myR.length){grid.innerHTML='';empty.classList.add('show');return;}
+  empty.classList.remove('show');
+  grid.innerHTML=myR.map(r=>{
+    const stars=Array.from({length:5},(_,j)=>`<span style="font-size:18px;color:${j<r.rating?'#f59e0b':'#ddd'};">★</span>`).join('');
+    const b=state.books.find(x=>x.id===r.bookId);
+    const cover=b?(b.customCover||BOOK_COVERS[b.coverIdx%BOOK_COVERS.length]):'';
+    return`<div class="panel fade-in" style="margin-bottom:0;">
+      ${cover?`<div style="height:80px;border-radius:8px;overflow:hidden;margin-bottom:14px;position:relative;"><img src="${cover}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.4),transparent);"></div><div style="position:absolute;bottom:8px;left:12px;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:#fff;">${r.bookTitle}</div></div>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div>${!cover?`<div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;margin-bottom:2px;">${r.bookTitle}</div>`:''}<div>${stars}</div></div>
+        <button class="btn btn-red btn-sm" onclick="deleteReview(${r.id})">🗑️</button>
+      </div>
+      <div style="font-size:14px;color:var(--text2);font-style:italic;line-height:1.6;">"${r.text}"</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;">${r.date}</div>
+    </div>`;
+  }).join('');
+}
+ 
+populate();renderMyReviews();
+</script>
+</body>
+</html>

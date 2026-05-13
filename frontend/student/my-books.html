@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Librat e Mi</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">🤝 Librat e Mi</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card acc-green fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="s-active">0</div><div class="stat-lbl">Aktive</div></div><div class="stat-icon-wrap">📖</div></div></div>
+      <div class="stat-card acc-gold fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Gjithsej</div></div><div class="stat-icon-wrap">📚</div></div></div>
+      <div class="stat-card acc-red fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="s-fines">€0</div><div class="stat-lbl">Gjoba Aktive</div></div><div class="stat-icon-wrap">⚠️</div></div></div>
+    </div>
+ 
+ 
+    <!-- KËRKESAT E MIJA -->
+    <div class="panel fade-in" style="margin-bottom:20px;">
+      <div class="panel-title"><span class="p-icon">📨</span> Kërkesat e Mia</div>
+      <div id="my-requests"></div>
+    </div>
+ 
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button class="btn btn-gold btn-sm" onclick="setTab('active',this)">📖 Aktive</button>
+      <button class="btn btn-outline btn-sm" onclick="setTab('returned',this)">✅ Kthyer</button>
+      <button class="btn btn-outline btn-sm" onclick="setTab('all',this)">📋 Të Gjitha</button>
+    </div>
+ 
+    <div id="rents-list"></div>
+    <div class="empty" id="r-empty"><div class="empty-icon">📚</div><div class="empty-title">Nuk ke huazime</div><p class="empty-sub"><a href="browse.html" style="color:var(--gold);">Shfleto librat →</a></p></div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('my-books.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+let state=loadAll(), curTab='active';
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+function updateStats(){
+  state=loadAll();
+  const myR=sr?state.rents.filter(r=>r.studentId===sr.id):[];
+  const active=myR.filter(r=>r.status==='active');
+  const fines=active.reduce((s,r)=>s+calcFine(r),0);
+  document.getElementById('s-active').textContent=active.length;
+  document.getElementById('s-total').textContent=myR.length;
+  document.getElementById('s-fines').textContent='€'+fines.toFixed(2);
+}
+ 
+function setTab(tab,btn){
+  curTab=tab;
+  document.querySelectorAll('.content .btn').forEach(b=>{if(b.textContent.includes('Aktive')||b.textContent.includes('Kthyer')||b.textContent.includes('Gjitha')){b.className='btn btn-outline btn-sm';}});
+  btn.className='btn btn-gold btn-sm';
+  render();renderMyRequests();
+}
+ 
+ 
+function renderMyRequests(){
+  state=loadAll();
+  if(!state.requests) state.requests=[];
+  const myReqs=sr?state.requests.filter(r=>r.studentId===sr.id):[];
+  const el=document.getElementById('my-requests');
+  if(!myReqs.length){
+    el.innerHTML='<p style="color:var(--muted);font-size:13px;">Nuk ke kërkesa aktive. <a href="browse.html" style="color:var(--gold);">Kërko libër →</a></p>';
+    return;
+  }
+  const statusMap={pending:'badge-gold',approved:'badge-green',rejected:'badge-red'};
+  const statusLbl={pending:'⏳ Në pritje',approved:'✅ Aprovuar',rejected:'❌ Refuzuar'};
+  const statusBg={pending:'var(--gold-bg)',approved:'var(--green-bg)',rejected:'var(--red-bg)'};
+  const statusBorder={pending:'var(--gold)',approved:'var(--green)',rejected:'var(--red)'};
+  el.innerHTML=myReqs.map(r=>`
+    <div style="display:flex;gap:14px;align-items:center;padding:14px;background:${statusBg[r.status]};border-radius:10px;border:1.5px solid ${statusBorder[r.status]};margin-bottom:10px;">
+      <div style="font-size:28px;">${r.status==='pending'?'⏳':r.status==='approved'?'✅':'❌'}</div>
+      <div style="flex:1;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;">${r.bookTitle}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${r.bookAuthor||''} · Kërkuar: ${r.requestDate}</div>
+        ${r.status==='approved'?`<div style="font-size:13px;font-weight:600;color:var(--green);margin-top:6px;">📅 Data e kthimit: ${r.dateReturn}</div><div style="font-size:12px;color:var(--green);">Tërhiqe librin nga biblioteka!</div>`:''}
+        ${r.status==='rejected'?`<div style="font-size:12px;color:var(--red);margin-top:4px;">Kontaktoni bibliotekarën për informacion.</div>`:''}
+        ${r.status==='pending'?`<div style="font-size:12px;color:var(--gold);margin-top:4px;">Administratori do të aprovojë kërkesën tuaj.</div>`:''}
+      </div>
+      <span class="badge ${statusMap[r.status]}">${statusLbl[r.status]}</span>
+    </div>`).join('');
+}
+ 
+function render(){
+  state=loadAll();
+  if(!sr){document.getElementById('r-empty').classList.add('show');return;}
+  let list=state.rents.filter(r=>r.studentId===sr.id);
+  if(curTab==='active')list=list.filter(r=>r.status==='active');
+  if(curTab==='returned')list=list.filter(r=>r.status==='returned');
+  const cont=document.getElementById('rents-list'),empty=document.getElementById('r-empty');
+  if(!list.length){cont.innerHTML='';empty.classList.add('show');return;}
+  empty.classList.remove('show');
+  cont.innerHTML=list.map(r=>{
+    const b=state.books.find(x=>x.id===r.bookId);
+    const fine=calcFine(r),late=fine>0;
+    const cover=b?(b.customCover||BOOK_COVERS[b.coverIdx%BOOK_COVERS.length]):'';
+    const daysLeft=r.status==='active'?Math.ceil((new Date(r.dateReturn)-new Date())/86400000):0;
+    return`<div class="panel fade-in" style="display:flex;gap:16px;align-items:center;">
+      <div style="width:56px;height:72px;border-radius:6px;overflow:hidden;flex-shrink:0;background:${b?getBookGradient(b):'var(--bg)'};">
+        ${cover?`<img src="${cover}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:''}
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;">${b?b.title:'Libër i fshirë'}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${b?b.author:''}</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span class="badge ${r.status==='returned'?'badge-gray':late?'badge-red':'badge-green'}">${r.status==='returned'?'✅ Kthyer':late?'⚠️ Me vonesë':'🟢 Aktiv'}</span>
+          <span style="font-size:12px;color:var(--muted);">📅 ${r.dateRented} → ${r.dateReturn}</span>
+          <strong style="color:var(--green);">€${r.price.toFixed(2)}</strong>
+          ${fine>0?`<span class="badge badge-red">Gjobë: €${fine.toFixed(2)}</span>`:''}
+          ${r.status==='active'&&!late&&daysLeft>=0?`<span style="font-size:12px;color:var(--blue);">Mbeten ${daysLeft} ditë</span>`:''}
+        </div>
+      </div>
+      ${r.status==='active'?`<a href="browse.html" class="btn btn-outline btn-sm">+ Huazo tjetër</a>`:''}
+    </div>`;
+  }).join('');
+  updateStats();
+}
+ 
+render();renderMyRequests();
+</script>
+</body>
+</html>

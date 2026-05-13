@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Huazimet</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-admin">⚙️ Administrator</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar">A</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">🤝 Huazimet</div></div>
+    <div class="topbar-right">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 CSV</button>
+      <div class="topbar-avatar" id="topbar-avatar">A</div>
+      <span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span>
+    </div>
+  </div>
+  <div class="content">
+    <div class="panel fade-in">
+      <div class="panel-title"><span class="p-icon">➕</span> Krijo Huazim të Ri</div>
+      <div class="form-grid">
+        <div class="ff"><label>Studenti *</label><select id="r-student" onchange="updatePreview()"><option value="">— Zgjidh Studentin —</option></select></div>
+        <div class="ff"><label>Libri *</label><select id="r-book" onchange="updatePreview()"><option value="">— Zgjidh Librin —</option></select></div>
+        <div class="ff"><label>Data e Huazimit</label><input id="r-date" type="date"></div>
+        <div class="ff"><label>Data e Kthimit</label><input id="r-return" type="date"></div>
+        <div class="ff full"><label>Çmimi dhe Informacioni</label><div class="price-preview" id="r-preview">Zgjidh studentin dhe librin për të parë çmimin</div></div>
+      </div>
+      <button class="btn btn-gold" style="margin-top:14px;width:100%;" onclick="addRent()">+ Krijo Huazim</button>
+    </div>
+ 
+ 
+    <!-- KËRKESA TË STUDENTËVE -->
+    <div class="panel fade-in" style="margin-bottom:24px;border:2px solid var(--gold);background:var(--gold-bg);">
+      <div class="panel-header">
+        <div class="panel-title"><span class="p-icon">📨</span> Kërkesat e Studentëve <span class="badge badge-red" id="req-count" style="margin-left:8px;">0</span></div>
+        <span style="font-size:13px;color:var(--muted);">Aprovo ose refuzo — vendos datën e kthimit</span>
+      </div>
+      <div id="requests-list"><p style="color:var(--muted);font-size:13px;">Nuk ka kërkesa aktive.</p></div>
+    </div>
+ 
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button class="btn btn-gold btn-sm" onclick="setTab('active',this)">🟢 Aktive</button>
+      <button class="btn btn-outline btn-sm" onclick="setTab('returned',this)">✅ Kthyer</button>
+      <button class="btn btn-outline btn-sm" onclick="setTab('all',this)">📋 Të Gjitha</button>
+    </div>
+ 
+    <div class="panel fade-in" style="padding:0;overflow:hidden;">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Libri</th><th>Studenti</th><th>Huazuar</th><th>Kthim</th><th>Çmimi</th><th>Gjoba</th><th>Statusi</th><th>Veprime</th></tr></thead>
+          <tbody id="r-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="empty" id="r-empty"><div class="empty-icon">🤝</div><div class="empty-title">Nuk ka huazime</div><p class="empty-sub">Krijo huazimin e parë.</p></div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderAdminNav('rent.html');
+let state=loadAll(), curTab='active';
+document.getElementById('r-date').value=todayStr();
+document.getElementById('r-return').value=nextWeekStr();
+ 
+ 
+function renderRequests(){
+  state=loadAll();
+  if(!state.requests) state.requests=[];
+  const pending=state.requests.filter(r=>r.status==='pending');
+  document.getElementById('req-count').textContent=pending.length;
+  document.getElementById('req-count').style.display=pending.length?'inline-flex':'none';
+  const el=document.getElementById('requests-list');
+  if(!pending.length){
+    el.innerHTML='<p style="color:var(--muted);font-size:13px;">✅ Nuk ka kërkesa aktive.</p>';
+    return;
+  }
+  el.innerHTML=pending.map(req=>{
+    const b=state.books.find(x=>x.id===req.bookId);
+    const s=state.students.find(x=>x.id===req.studentId);
+    const pages=b&&b.pages?b.pages:null;
+    // Sugjerim dite bazuar ne faqe
+    const suggested = pages ? (pages > 300 ? 30 : pages > 150 ? 14 : 7) : 14;
+    return`<div style="background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;margin-bottom:4px;">${req.bookTitle}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${req.bookAuthor||''}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <span class="badge badge-blue">👤 ${req.studentName}</span>
+            <span class="badge badge-gold">${req.studentFaculty||'—'}</span>
+            <span class="badge badge-green">€${req.priceStudent?req.priceStudent.toFixed(2):'—'}</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);">📅 Kërkuar: ${req.requestDate}</div>
+          ${b&&b.stock<=0?'<div class="badge badge-red" style="margin-top:6px;">❌ Pa stok</div>':''}
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;">
+            📅 Cakto Datën e Kthimit
+            ${pages?`<span style="color:var(--blue);font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px;">(Sugjeruar: ${suggested} ditë — ${pages} faqe)</span>`:''}
+          </div>
+          <input type="date" id="req-date-${req.id}" value="${new Date(Date.now()+suggested*86400000).toISOString().slice(0,10)}"
+            style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;margin-bottom:10px;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="btn btn-green" onclick="approveRequest(${req.id})" ${b&&b.stock<=0?'disabled style="opacity:0.4;"':''}>
+              ✅ Aprovo
+            </button>
+            <button class="btn btn-red" onclick="rejectRequest(${req.id})">
+              ❌ Refuzo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+ 
+function approveRequest(id){
+  state=loadAll();
+  if(!state.requests) state.requests=[];
+  const req=state.requests.find(x=>x.id===id);
+  if(!req)return;
+  const dateReturn=document.getElementById('req-date-'+id)?.value;
+  if(!dateReturn){toast('⚠️ Vendos datën e kthimit!','error');return;}
+  if(dateReturn<=todayStr()){toast('⚠️ Data e kthimit duhet të jetë në të ardhmen!','error');return;}
+  const b=state.books.find(x=>x.id===req.bookId);
+  if(!b||b.stock<=0){toast('⚠️ Nuk ka kopje në stok!','error');return;}
+  b.stock--;
+  req.status='approved';
+  req.dateReturn=dateReturn;
+  req.approvedDate=todayStr();
+  if(!state.rents) state.rents=[];
+  state.rents.push({
+    id:state.nextRentId++,
+    studentId:req.studentId, studentName:req.studentName, studentFaculty:req.studentFaculty,
+    bookId:req.bookId, dateRented:todayStr(), dateReturn:dateReturn,
+    price:req.priceStudent, status:'active'
+  });
+  // Dërgoj njoftim te studenti si mesazh
+  if(!state.messages) state.messages=[];
+  state.messages.push({
+    id:state.nextMsgId++,
+    studentId:req.studentId, studentName:req.studentName,
+    from:'admin',
+    text:`✅ Kërkesa juaj për "${req.bookTitle}" u aprovua! Data e kthimit: ${dateReturn}. Mund ta tërhiqni librin nga biblioteka.`,
+    time:new Date().toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}),
+    readByAdmin:true, readByStudent:false
+  });
+  saveAll(state);
+  renderRequests();renderRents();populateSel();
+  toast(`✅ Kërkesa e "${req.studentName}" u aprovua! Data e kthimit: ${dateReturn}`,'success');
+}
+ 
+function rejectRequest(id){
+  state=loadAll();
+  if(!state.requests) state.requests=[];
+  const req=state.requests.find(x=>x.id===id);
+  if(!req)return;
+  if(!confirm(`Refuzo kërkesën e "${req.studentName}" për "${req.bookTitle}"?`))return;
+  req.status='rejected';
+  req.rejectedDate=todayStr();
+  if(!state.messages) state.messages=[];
+  state.messages.push({
+    id:state.nextMsgId++,
+    studentId:req.studentId, studentName:req.studentName,
+    from:'admin',
+    text:`❌ Kërkesa juaj për "${req.bookTitle}" u refuzua. Kontaktoni bibliotekarën për më shumë informacion.`,
+    time:new Date().toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}),
+    readByAdmin:true, readByStudent:false
+  });
+  saveAll(state);
+  renderRequests();
+  toast(`❌ Kërkesa u refuzua.`);
+}
+ 
+function populateSel(){
+  document.getElementById('r-student').innerHTML='<option value="">— Zgjidh Studentin —</option>'+state.students.map(s=>{const a=state.rents.filter(r=>r.studentId===s.id&&r.status==='active').length;return`<option value="${s.id}" ${a>=MAX_RENTS?'disabled':''}>${s.name} (${s.studentId}) · ${a}/${MAX_RENTS}</option>`;}).join('');
+  document.getElementById('r-book').innerHTML='<option value="">— Zgjidh Librin —</option>'+state.books.filter(b=>b.stock>0).map(b=>`<option value="${b.id}">${b.title} — €${b.priceStudent.toFixed(2)} · ${b.stock} kopje</option>`).join('');
+}
+ 
+function updatePreview(){
+  const sid=+document.getElementById('r-student').value;
+  const bid=+document.getElementById('r-book').value;
+  const prev=document.getElementById('r-preview');
+  if(!sid||!bid){prev.textContent='Zgjidh studentin dhe librin';return;}
+  const b=state.books.find(x=>x.id===bid),s=state.students.find(x=>x.id===sid);
+  const active=state.rents.filter(r=>r.studentId===sid&&r.status==='active').length;
+  if(active>=MAX_RENTS){prev.innerHTML=`<strong style="color:var(--red)">⚠️ ${s.name} ka ${MAX_RENTS} libra aktive!</strong>`;return;}
+  const save=(b.price-b.priceStudent).toFixed(2),pct=Math.round((1-b.priceStudent/b.price)*100);
+  prev.innerHTML=`Çmimi normal: <s>€${b.price.toFixed(2)}</s> → <strong style="color:var(--green)">Student: €${b.priceStudent.toFixed(2)}</strong> <span style="margin-left:8px;background:var(--green-bg);color:var(--green);padding:2px 8px;border-radius:20px;font-size:11px;">Kurseni €${save} (-${pct}%)</span> <span style="margin-left:6px;font-size:11px;color:var(--muted);">Aktive: ${active}/${MAX_RENTS}</span>`;
+}
+ 
+function addRent(){
+  const sid=+document.getElementById('r-student').value;
+  const bid=+document.getElementById('r-book').value;
+  const dated=document.getElementById('r-date').value;
+  const dater=document.getElementById('r-return').value;
+  if(!sid){toast('⚠️ Zgjidh studentin!','error');return;}
+  if(!bid){toast('⚠️ Zgjidh librin!','error');return;}
+  if(!dated||!dater){toast('⚠️ Vendos datat!','error');return;}
+  if(dater<=dated){toast('⚠️ Data e kthimit duhet pas huazimit!','error');return;}
+  const b=state.books.find(x=>x.id===bid),s=state.students.find(x=>x.id===sid);
+  if(b.stock<=0){toast(`⚠️ "${b.title}" nuk ka kopje!`,'error');return;}
+  const active=state.rents.filter(r=>r.studentId===sid&&r.status==='active').length;
+  if(active>=MAX_RENTS){toast(`⚠️ "${s.name}" ka ${MAX_RENTS} libra aktive!`,'error');return;}
+  b.stock--;
+  state.rents.push({id:state.nextRentId++,studentId:sid,studentName:s.name,studentFaculty:s.faculty,bookId:bid,dateRented:dated,dateReturn:dater,price:b.priceStudent,status:'active'});
+  saveAll(state);populateSel();renderRents();renderRequests();
+  toast(`🤝 Huazimi u krye! €${b.priceStudent.toFixed(2)}`,'success');
+}
+ 
+function returnBook(id){
+  const r=state.rents.find(x=>x.id===id);
+  const fine=calcFine(r),b=state.books.find(x=>x.id===r.bookId);
+  const days=fine>0?Math.floor((new Date()-new Date(r.dateReturn))/86400000):0;
+  if(!confirm(fine>0?`Vonesë ${days} ditë. Gjoba: €${fine.toFixed(2)}. Konfirmo?`:`Konfirmo kthimin?`))return;
+  r.status='returned';r.fine=fine;if(b)b.stock++;
+  saveAll(state);populateSel();renderRents();renderRequests();
+  toast(fine>0?`✅ Kthyer. Gjobë: €${fine.toFixed(2)}`:'✅ Kthyer!','success');
+}
+ 
+function setTab(tab,btn){
+  curTab=tab;
+  document.querySelectorAll('.content .btn').forEach(b=>{if(['🟢 Aktive','✅ Kthyer','📋 Të Gjitha'].some(l=>b.textContent.includes(l.replace(/[🟢✅📋]/,'').trim()))){b.className='btn btn-outline btn-sm';}});
+  btn.className='btn btn-gold btn-sm';
+  renderRents();
+}
+ 
+function renderRents(){
+  let list=state.rents;
+  if(curTab==='active')list=state.rents.filter(r=>r.status==='active');
+  if(curTab==='returned')list=state.rents.filter(r=>r.status==='returned');
+  const tbody=document.getElementById('r-tbody'),empty=document.getElementById('r-empty');
+  if(!list.length){tbody.innerHTML='';empty.classList.add('show');return;}
+  empty.classList.remove('show');
+  tbody.innerHTML=list.map(r=>{
+    const b=state.books.find(x=>x.id===r.bookId),s=state.students.find(x=>x.id===r.studentId);
+    const fine=calcFine(r),late=fine>0;
+    const sc=r.status==='returned'?'badge-gray':late?'badge-red':'badge-green';
+    const sl=r.status==='returned'?'✅ Kthyer':late?'⚠️ Vonuar':'🟢 Aktiv';
+    return`<tr>
+      <td><strong>${b?b.title:'I fshirë'}</strong></td>
+      <td>${s?s.name:'I fshirë'}<div style="font-size:11px;color:var(--muted);">${s?s.faculty||'':''}
+      </div></td>
+      <td>${r.dateRented}</td>
+      <td>${r.dateReturn}</td>
+      <td><strong style="color:var(--green)">€${r.price.toFixed(2)}</strong></td>
+      <td>${fine>0?`<span class="badge badge-red">€${fine.toFixed(2)}</span>`:r.fine>0?`<span class="badge badge-gray">€${r.fine.toFixed(2)}</span>`:'—'}</td>
+      <td><span class="badge ${sc}">${sl}</span></td>
+      <td>${r.status==='active'?`<button class="btn btn-green btn-sm" onclick="returnBook(${r.id})">✅ Kthe</button>`:'—'}</td>
+    </tr>`;
+  }).join('');
+}
+ 
+function exportCSV(){
+  let csv='Studenti,Libri,Data Huazimit,Data Kthimit,Çmimi,Gjoba,Statusi\n';
+  state.rents.forEach(r=>{const b=state.books.find(x=>x.id===r.bookId),s=state.students.find(x=>x.id===r.studentId),f=r.fine||calcFine(r);csv+=`"${s?s.name:'?'}","${b?b.title:'?'}",${r.dateRented},${r.dateReturn},€${r.price.toFixed(2)},€${f.toFixed(2)},${r.status==='active'?'Aktiv':'Kthyer'}\n`;});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download='huazimet.csv';a.click();
+  toast('📥 huazimet.csv u shkarkua!');
+}
+ 
+populateSel();renderRents();renderRequests();
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Njoftime</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">🔔 Njoftime</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <div id="notif-list"></div>
+    <div class="empty" id="n-empty"><div class="empty-icon">🔔</div><div class="empty-title">Nuk ka njoftime</div><p class="empty-sub">Gjithçka është në rregull!</p></div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('notifications.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+const state=loadAll();
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+const notifs=[];
+// Shto njoftime për kërkesat
+if(sr){
+  const myReqs=state.requests?state.requests.filter(r=>r.studentId===sr.id):[];
+  const approved=myReqs.filter(r=>r.status==='approved'&&!r.notifSeen);
+  const rejected=myReqs.filter(r=>r.status==='rejected'&&!r.notifSeen);
+  approved.forEach(r=>{
+    notifs.unshift({type:'success',icon:'✅',title:`Kërkesa juaj për "${r.bookTitle}" u aprovua!`,sub:`Data e kthimit: ${r.dateReturn}. Tërhiqeni librin nga biblioteka.`,bg:'var(--green-bg)',border:'var(--green)',color:'var(--green)'});
+  });
+  rejected.forEach(r=>{
+    notifs.unshift({type:'error',icon:'❌',title:`Kërkesa juaj për "${r.bookTitle}" u refuzua.`,sub:`Kontaktoni bibliotekarën për informacion shtesë.`,bg:'var(--red-bg)',border:'var(--red)',color:'var(--red)'});
+  });
+  const pending=myReqs.filter(r=>r.status==='pending');
+  if(pending.length>0){
+    notifs.push({type:'info',icon:'⏳',title:`Keni ${pending.length} kërkesë në pritje të aprovimit.`,sub:`Administratori do të shqyrtojë kërkesën tuaj së shpejti.`,bg:'var(--gold-bg)',border:'var(--gold)',color:'var(--gold)'});
+  }
+}
+ 
+ 
+if(sr){
+  const myR=state.rents.filter(r=>r.studentId===sr.id&&r.status==='active');
+  myR.forEach(r=>{
+    const fine=calcFine(r);
+    const b=state.books.find(x=>x.id===r.bookId);
+    const days=Math.ceil((new Date(r.dateReturn)-new Date())/86400000);
+    if(fine>0){
+      notifs.push({type:'error',icon:'⚠️',title:`Libri "${b?b.title:'?'}" ka vonesë!`,sub:`Gjobë: €${fine.toFixed(2)}. Kthere sa më shpejt.`,bg:'var(--red-bg)',border:'var(--red)',color:'var(--red)'});
+    } else if(days<=3&&days>=0){
+      notifs.push({type:'warning',icon:'⏰',title:`Afati i librit "${b?b.title:'?'}" po afrohet!`,sub:`Mbeten vetëm ${days} ditë. Ktheje para ${r.dateReturn}.`,bg:'var(--gold-bg)',border:'var(--gold)',color:'var(--gold)'});
+    }
+  });
+ 
+  const lowStock=state.books.filter(b=>b.stock===1);
+  lowStock.forEach(b=>{
+    notifs.push({type:'info',icon:'📢',title:`Libri "${b.title}" ka 1 kopje të fundit!`,sub:`Huazoje para se të mbarojë stoku.`,bg:'var(--blue-bg)',border:'var(--blue)',color:'var(--blue)'});
+  });
+ 
+  const newBooks=state.books.filter(b=>b.id>4);
+  if(newBooks.length>0){
+    notifs.push({type:'success',icon:'🆕',title:`${newBooks.length} libra të rinj u shtuan!`,sub:`Shiko katalogun për librat e fundit.`,bg:'var(--green-bg)',border:'var(--green)',color:'var(--green)'});
+  }
+ 
+  const adminMsgs=state.messages.filter(m=>m.studentId===sr.id&&m.from==='admin'&&!m.readByStudent);
+  if(adminMsgs.length>0){
+    notifs.push({type:'msg',icon:'💬',title:`Keni ${adminMsgs.length} mesazh të ri nga Administratori!`,sub:'Kliko për të lexuar dhe për të përgjigjet.',bg:'var(--purple-bg)',border:'var(--purple)',color:'var(--purple)'});
+  }
+}
+ 
+const list=document.getElementById('notif-list'),empty=document.getElementById('n-empty');
+if(!notifs.length){empty.classList.add('show');}
+else{
+  list.innerHTML=notifs.map((n,i)=>`
+    <div class="fade-in" style="animation-delay:${i*.08}s;display:flex;gap:14px;padding:18px;border-radius:12px;border:1.5px solid ${n.border};background:${n.bg};margin-bottom:12px;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">${n.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:700;color:${n.color};margin-bottom:4px;">${n.title}</div>
+        <div style="font-size:13px;color:var(--text2);">${n.sub}</div>
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

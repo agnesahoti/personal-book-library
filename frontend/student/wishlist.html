@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Wishlist</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-student">🎓 Student</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar" id="s-av">S</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">❤️ Wishlist</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">S</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <div class="panel fade-in" style="margin-bottom:20px;">
+      <div class="panel-title"><span class="p-icon">❤️</span> Lista e Dëshirave</div>
+      <p style="font-size:14px;color:var(--muted);">Librat që dëshiron të lexosh. Kur të jenë disponibël, mund t'i huazosh menjëherë.</p>
+    </div>
+    <div id="wish-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;"></div>
+    <div class="empty" id="w-empty">
+      <div class="empty-icon">❤️</div>
+      <div class="empty-title">Wishlist-i është bosh</div>
+      <p class="empty-sub">Shko te <a href="browse.html" style="color:var(--gold);">Librat</a> dhe shto librin tënd të dëshiruar.</p>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderStudentNav('wishlist.html');
+const user=getUser();
+document.getElementById('s-av').textContent=user.name.charAt(0);
+let state=loadAll();
+const sr=state.students.find(s=>s.name===user.name||s.studentId===user.studentId);
+ 
+function removeWish(id){
+  state.wishlist=state.wishlist.filter(w=>w.id!==id);
+  saveAll(state);render();toast('🗑️ U fshi nga wishlist.');
+}
+ 
+function rentFromWish(bookId){
+  state=loadAll();
+  if(!sr){toast('⚠️ Llogaria nuk është e lidhur!','error');return;}
+  const b=state.books.find(x=>x.id===bookId);
+  if(!b||b.stock<=0){toast('⚠️ Nuk ka kopje!','error');return;}
+  const active=state.rents.filter(r=>r.studentId===sr.id&&r.status==='active').length;
+  if(active>=MAX_RENTS){toast('⚠️ Limit i arritur (3 libra)!','error');return;}
+  b.stock--;
+  state.rents.push({id:state.nextRentId++,studentId:sr.id,studentName:sr.name,studentFaculty:sr.faculty,bookId,dateRented:todayStr(),dateReturn:nextWeekStr(),price:b.priceStudent,status:'active'});
+  state.wishlist=state.wishlist.filter(w=>!(w.studentId===sr.id&&w.bookId===bookId));
+  saveAll(state);render();toast(`🎉 "${b.title}" u huazua!`,'success');
+}
+ 
+function render(){
+  state=loadAll();
+  const myWish=sr?state.wishlist.filter(w=>w.studentId===sr.id):[];
+  const grid=document.getElementById('wish-grid'),empty=document.getElementById('w-empty');
+  if(!myWish.length){grid.innerHTML='';empty.classList.add('show');return;}
+  empty.classList.remove('show');
+  grid.innerHTML=myWish.map(w=>{
+    const b=state.books.find(x=>x.id===w.bookId);
+    if(!b)return'';
+    const cover=b.customCover||BOOK_COVERS[b.coverIdx%BOOK_COVERS.length];
+    const disc=Math.round((1-b.priceStudent/b.price)*100);
+    return`<div class="wish-card panel fade-in" style="display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden;">
+      <div style="height:100px;overflow:hidden;position:relative;">
+        <img src="${cover}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.background='${getBookGradient(b)}';this.style.display='none'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5),transparent);"></div>
+        <div style="position:absolute;top:8px;right:8px;"><span class="badge ${b.stock>0?'badge-green':'badge-red'}">${b.stock>0?'✅ Disponibël':'❌ Pa stok'}</span></div>
+      </div>
+      <div style="padding:16px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;margin-bottom:3px;">${b.title}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${b.author}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <s style="font-size:12px;color:var(--muted);">€${b.price.toFixed(2)}</s>
+          <span style="font-size:16px;font-weight:700;color:var(--green);">€${b.priceStudent.toFixed(2)}</span>
+          <span class="badge badge-green">-${disc}%</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          ${b.stock>0?`<button class="btn btn-gold btn-sm" style="flex:1;justify-content:center;" onclick="rentFromWish(${b.id})">🤝 Huazo Tani</button>`:'<button class="btn btn-outline btn-sm" style="flex:1;" disabled>❌ Pa Stok</button>'}
+          <button class="btn btn-red btn-sm" onclick="removeWish(${w.id})">🗑️</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">Shtuar: ${w.addedDate||'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+ 
+render();
+</script>
+</body>
+</html>
+ 

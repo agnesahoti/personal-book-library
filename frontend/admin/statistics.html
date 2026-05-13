@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteka — Statistikat</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">📚</div><div class="sidebar-title">Biblioteka</div><div class="sidebar-role role-admin">⚙️ Administrator</div></div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user-row"><div class="sidebar-avatar">A</div><div><div class="sidebar-user-name" id="sidebar-user-name"></div><div class="sidebar-user-role" id="sidebar-user-role"></div></div></div>
+    <button class="logout-btn" onclick="logout()">🚪 Dil nga sistemi</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">📊 Statistikat</div></div>
+    <div class="topbar-right"><div class="topbar-avatar" id="topbar-avatar">A</div><span id="topbar-user-name" style="font-size:14px;color:var(--muted);margin-left:8px;"></span></div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card acc-gold fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="st-rev">€0</div><div class="stat-lbl">Të Ardhura</div></div><div class="stat-icon-wrap">💰</div></div></div>
+      <div class="stat-card acc-blue fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="st-rents">0</div><div class="stat-lbl">Huazime Gjithsej</div></div><div class="stat-icon-wrap">🤝</div></div></div>
+      <div class="stat-card acc-green fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="st-avail">0</div><div class="stat-lbl">Kopje Disponibël</div></div><div class="stat-icon-wrap">📚</div></div></div>
+      <div class="stat-card acc-red fade-in"><div class="stat-card-inner"><div><div class="stat-num" id="st-fines">€0</div><div class="stat-lbl">Gjoba Totale</div></div><div class="stat-icon-wrap">⚠️</div></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+      <div class="panel fade-in"><div class="panel-title"><span class="p-icon">📚</span> Librat më të Huazuar</div><div id="top-books"></div></div>
+      <div class="panel fade-in"><div class="panel-title"><span class="p-icon">🏫</span> Sipas Fakultetit</div><div id="by-fac"></div></div>
+    </div>
+    <div class="panel fade-in">
+      <div class="panel-title"><span class="p-icon">💳</span> Historiku i Pagesave</div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Libri</th><th>Studenti</th><th>Data</th><th>Çmimi</th><th>Gjoba</th><th>Total</th></tr></thead><tbody id="pay-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"><div class="tdot"></div><span id="toast-msg"></span></div>
+<script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+renderAdminNav('statistics.html');
+const st=loadAll();
+const rev=st.rents.reduce((s,r)=>s+r.price+(r.fine||0),0);
+const fines=st.rents.reduce((s,r)=>s+calcFine(r)+(r.fine||0),0);
+const avail=st.books.reduce((s,b)=>s+b.stock,0);
+document.getElementById('st-rev').textContent='€'+rev.toFixed(2);
+document.getElementById('st-rents').textContent=st.rents.length;
+document.getElementById('st-avail').textContent=avail;
+document.getElementById('st-fines').textContent='€'+fines.toFixed(2);
+const bCnt={};st.rents.forEach(r=>{bCnt[r.bookId]=(bCnt[r.bookId]||0)+1;});
+const topB=Object.entries(bCnt).sort((a,b)=>b[1]-a[1]).slice(0,6);
+const maxB=Math.max(...topB.map(x=>+x[1]),1);
+document.getElementById('top-books').innerHTML=topB.length?topB.map(([bid,c])=>{const b=st.books.find(x=>x.id===+bid);return`<div class="bar-row"><span class="bar-lbl">${b?b.title:'I fshirë'}</span><div class="bar-track"><div class="bar-fill" style="width:${c/maxB*100}%"></div></div><span class="bar-cnt">${c}</span></div>`;}).join(''):'<p style="color:var(--muted);font-size:13px;">Nuk ka huazime.</p>';
+const fCnt={};st.rents.forEach(r=>{if(r.studentFaculty)fCnt[r.studentFaculty]=(fCnt[r.studentFaculty]||0)+1;});
+const topF=Object.entries(fCnt).sort((a,b)=>b[1]-a[1]);
+const maxF=Math.max(...topF.map(x=>+x[1]),1);
+document.getElementById('by-fac').innerHTML=topF.length?topF.map(([f,c])=>`<div class="bar-row"><span class="bar-lbl">${f}</span><div class="bar-track"><div class="bar-fill" style="width:${c/maxF*100}%"></div></div><span class="bar-cnt">${c}</span></div>`).join(''):'<p style="color:var(--muted);font-size:13px;">Nuk ka të dhëna.</p>';
+const rec=[...st.rents].reverse().slice(0,20);
+document.getElementById('pay-tbody').innerHTML=rec.length?rec.map(r=>{const b=st.books.find(x=>x.id===r.bookId),s=st.students.find(x=>x.id===r.studentId),f=r.fine||calcFine(r);return`<tr><td>${b?b.title:'I fshirë'}</td><td>${s?s.name:'I fshirë'}</td><td>${r.dateRented}</td><td>€${r.price.toFixed(2)}</td><td>${f>0?`<span class="badge badge-red">€${f.toFixed(2)}</span>`:'—'}</td><td><strong style="color:var(--green)">€${(r.price+f).toFixed(2)}</strong></td></tr>`;}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">Nuk ka pagesa.</td></tr>';
+</script>
+</body>
+</html>
